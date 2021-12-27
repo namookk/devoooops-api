@@ -7,3 +7,5 @@ spring:
     url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
     username: devoooops
     password: devOooops22!
+  jpa:
+    open-in-view: false
