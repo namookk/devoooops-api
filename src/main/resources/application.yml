@@ -7,3 +7,15 @@ spring:
     url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
     username: devoooops
     password: devOooops22!
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+jwt:
+  secret-key: devoooops-jwt
