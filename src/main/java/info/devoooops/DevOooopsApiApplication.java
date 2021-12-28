@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
+@SpringBootApplication(exclude = {JpaRepositoriesAutoConfiguration.class})
 public class DevOooopsApiApplication {
     @Bean
     public ModelMapper modelMapper(){

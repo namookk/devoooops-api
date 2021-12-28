@@ -14,9 +14,15 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
 
+logging:
+  level:
+    org.hibernate.type: trace
+
 jwt:
-  secret-key: devoooops-jwt
+  secret-key: aW5maW5pdC1sb29wLWRldi1Pb29vcHMtand0LXNlY3JldC1rZXktZm9yLWF1dGhvcml6YXRpb24K

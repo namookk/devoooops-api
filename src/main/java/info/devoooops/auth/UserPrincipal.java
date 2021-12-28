@@ -28,13 +28,7 @@ public class UserPrincipal implements UserDetails {
     private Integer career;
     private String profilePath;
     private String profileImgnm;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        ArrayList<GrantedAuthority> auth = new ArrayList<>();
-        auth.add(new SimpleGrantedAuthority("ROLE_USER"));
-        return auth;
-    }
+    private Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public String getUsername() {

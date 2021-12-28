@@ -26,11 +26,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-rest:2.6.2' //RESTFUL
     implementation 'io.springfox:springfox-boot-starter:3.0.0' // Swagger
     implementation 'org.modelmapper:modelmapper:2.4.5' // Model Mapper
-    implementation 'io.jsonwebtoken:jjwt:0.9.1' // JWT
     implementation 'org.projectlombok:lombok:1.18.20' // Lombok
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java' // MySQL
     annotationProcessor 'org.projectlombok:lombok' // Lombok
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
