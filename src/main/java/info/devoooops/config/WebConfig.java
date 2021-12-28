@@ -2,6 +2,7 @@ package info.devoooops.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -14,8 +15,16 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET","POST","PUT","DELETE")
+                .allowedMethods(
+                        HttpMethod.GET.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PATCH.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name(),
+                        HttpMethod.OPTIONS.name()
+                )
                 .allowedHeaders("headers")
+                .allowCredentials(false)
                 .maxAge(3000);
     }
 
