@@ -15,6 +15,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,6 +46,7 @@ public class JwtTokenUtil {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
+                .claim("PRINCIPAL", authentication.getPrincipal())
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
@@ -70,7 +72,6 @@ public class JwtTokenUtil {
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
-
         // 클레임에서 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
@@ -78,12 +79,8 @@ public class JwtTokenUtil {
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserPrincipal principal = UserPrincipal.builder()
-                .userId(claims.getSubject())
-                .password("")
-                .authorities(authorities)
-                .build();
-        
+        UserPrincipal principal = UserPrincipal.fromToken((LinkedHashMap<String, Object>)claims.get("PRINCIPAL"));
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

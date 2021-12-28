@@ -2,6 +2,7 @@ package info.devoooops.config;
 
 import info.devoooops.auth.JwtAuthenticationEntryPoint;
 import info.devoooops.auth.JwtRequestFilter;
+import info.devoooops.auth.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,28 +23,28 @@ import javax.sql.DataSource;
 public class SecutiryConfig extends WebSecurityConfigurerAdapter {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Autowired private UserDetailsService userDetailsService;
+    @Autowired private JwtUserDetailsService jwtUserDetailsService;
     @Autowired private JwtRequestFilter jwtRequestFilter;
     @Autowired private DataSource dataSource;
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManager() throws Exception{
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-        auth.jdbcAuthentication().dataSource(dataSource);
-
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
-    }
+//
+//    @Bean
+//    @Override
+//    public AuthenticationManager authenticationManager() throws Exception{
+//        return super.authenticationManagerBean();
+//    }
+//
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+//        auth.jdbcAuthentication().dataSource(dataSource);
+//
+//        auth.userDetailsService(jwtUserDetailsService)
+//                .passwordEncoder(passwordEncoder);
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http.httpBasic().disable()
-                .csrf().and().cors().disable()
+                .cors().disable().csrf().disable()
                 .headers().frameOptions().disable()
                 .and()
                 .sessionManagement()

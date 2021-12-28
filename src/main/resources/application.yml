@@ -25,4 +25,4 @@ logging:
     org.hibernate.type: trace
 
 jwt:
-  secret-key: aW5maW5pdC1sb29wLWRldi1Pb29vcHMtand0LXNlY3JldC1rZXktZm9yLWF1dGhvcml6YXRpb24K
+  secret-key: aW5maW5pdGUtbG9vcC1zdHVkeS1kZXYtT29vb3BzLXByb2plY3Qtc2VjdXJpdHktand0LXNlY3JldC1rZXktZm9yLWF1dGhvcml6YXRpb24K
