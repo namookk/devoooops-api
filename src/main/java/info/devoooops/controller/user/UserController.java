@@ -1,6 +1,6 @@
 package info.devoooops.controller.user;
 
-import info.devoooops.auth.UserPrincipal;
+import info.devoooops.payload.auth.UserPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

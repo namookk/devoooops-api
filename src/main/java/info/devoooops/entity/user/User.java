@@ -1,6 +1,6 @@
 package info.devoooops.entity.user;
 
-import info.devoooops.audit.DateAudit;
+import info.devoooops.model.audit.DateAudit;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

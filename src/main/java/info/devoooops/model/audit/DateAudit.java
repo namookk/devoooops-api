@@ -1,4 +1,4 @@
-package info.devoooops.audit;
+package info.devoooops.model.audit;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,15 +17,15 @@ public abstract class DateAudit {
 
     @CreatedBy
     @Column(nullable = false, updatable = false)
-    private String regid;
+    private String regId;
 
     @CreatedDate
-    private Instant regdate;
+    private Instant regDate;
 
     @LastModifiedBy
-    private String updid;
+    private String updId;
 
     @LastModifiedDate
-    private Instant upddate;
+    private Instant updDate;
 
 }

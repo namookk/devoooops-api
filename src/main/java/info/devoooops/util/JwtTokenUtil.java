@@ -1,5 +1,7 @@
-package info.devoooops.auth;
+package info.devoooops.util;
 
+import info.devoooops.payload.auth.JwtResponse;
+import info.devoooops.payload.auth.UserPrincipal;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

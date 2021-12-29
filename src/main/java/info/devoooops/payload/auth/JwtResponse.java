@@ -1,4 +1,4 @@
-package info.devoooops.auth;
+package info.devoooops.payload.auth;
 
 import lombok.Builder;
 import lombok.Getter;
