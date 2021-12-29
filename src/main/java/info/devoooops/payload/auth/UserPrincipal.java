@@ -1,19 +1,21 @@
-package info.devoooops.auth;
+package info.devoooops.payload.auth;
 
-import info.devoooops.user.entity.User;
-import info.devoooops.user.entity.UserStatus;
-import lombok.Builder;
-import lombok.Getter;
+import info.devoooops.entity.user.UserStatus;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserPrincipal implements UserDetails {
     private String cid;
     private String userId;
@@ -28,7 +30,11 @@ public class UserPrincipal implements UserDetails {
     private Integer career;
     private String profilePath;
     private String profileImgnm;
-    private Collection<? extends GrantedAuthority> authorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
 
     @Override
     public String getUsername() {
@@ -53,5 +59,17 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public static UserPrincipal fromToken(LinkedHashMap<String, Object> map){
+        return UserPrincipal.builder()
+                .cid((String)map.get("cid"))
+                .userId((String)map.get("userId"))
+                .name((String)map.get("name"))
+                .nickname((String)map.get("nickname"))
+                //.status((UserStatus)map.get("status"))
+                .gender((String)map.get("gender"))
+                .birthDate((String)map.get("birthDate"))
+                .build();
     }
 }

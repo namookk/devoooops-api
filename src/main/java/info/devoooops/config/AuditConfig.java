@@ -1,4 +1,4 @@
-package info.devoooops.audit;
+package info.devoooops.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ public class AuditConfig {
 
     @Bean
     public AuditorAware<String> auditorProvider() {
-        //return () -> Optional.of(SecurityContextHolder.getContext().getAuthentication().getName());
-        return () -> Optional.of("test");
+        return () -> Optional.of(SecurityContextHolder.getContext().getAuthentication().getName());
+//        return () -> Optional.of("test");
     }
 }

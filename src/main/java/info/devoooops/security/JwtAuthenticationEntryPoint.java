@@ -1,4 +1,4 @@
-package info.devoooops.auth;
+package info.devoooops.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
