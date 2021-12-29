@@ -1,14 +1,12 @@
 package info.devoooops.auth;
 
-import info.devoooops.user.entity.User;
-import info.devoooops.user.entity.UserStatus;
+import info.devoooops.entity.user.UserStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;

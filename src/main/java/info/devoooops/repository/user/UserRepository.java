@@ -1,6 +1,6 @@
-package info.devoooops.user.repository;
+package info.devoooops.repository.user;
 
-import info.devoooops.user.entity.User;
+import info.devoooops.entity.user.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

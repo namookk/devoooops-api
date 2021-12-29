@@ -1,4 +1,4 @@
-package info.devoooops.user.entity;
+package info.devoooops.entity.user;
 
 import info.devoooops.audit.DateAudit;
 import io.swagger.annotations.ApiParam;

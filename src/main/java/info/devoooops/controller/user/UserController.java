@@ -1,4 +1,4 @@
-package info.devoooops.user.controller;
+package info.devoooops.controller.user;
 
 import info.devoooops.auth.UserPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;

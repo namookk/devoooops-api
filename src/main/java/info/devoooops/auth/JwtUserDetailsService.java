@@ -1,10 +1,9 @@
 package info.devoooops.auth;
 
-import info.devoooops.user.entity.User;
-import info.devoooops.user.repository.UserRepository;
+import info.devoooops.entity.user.User;
+import info.devoooops.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
