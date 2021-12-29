@@ -3,6 +3,7 @@ package info.devoooops.config;
 import info.devoooops.auth.JwtAuthenticationEntryPoint;
 import info.devoooops.auth.JwtRequestFilter;
 import info.devoooops.auth.JwtUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,12 +21,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.sql.DataSource;
 
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecutiryConfig extends WebSecurityConfigurerAdapter {
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Autowired private JwtUserDetailsService jwtUserDetailsService;
-    @Autowired private JwtRequestFilter jwtRequestFilter;
-    @Autowired private DataSource dataSource;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtUserDetailsService jwtUserDetailsService;
+    private final JwtRequestFilter jwtRequestFilter;
+    private final DataSource dataSource;
 //
 //    @Bean
 //    @Override

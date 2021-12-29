@@ -1,5 +1,6 @@
 package info.devoooops.auth;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,10 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/auth")
 @Slf4j
+@RequiredArgsConstructor
 public class JwtAuthController {
-    @Autowired private AuthenticationManagerBuilder authenticationManagerBuilder;
-    @Autowired private JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> doLogin(@RequestBody JwtRequest authenticationRequest) throws Exception{

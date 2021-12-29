@@ -2,6 +2,7 @@ package info.devoooops.auth;
 
 import info.devoooops.user.entity.User;
 import info.devoooops.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,11 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class JwtUserDetailsService implements UserDetailsService {
-
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private UserRepository userRepository;
-    @Autowired private ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
