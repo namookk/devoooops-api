@@ -16,18 +16,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: build and test
+    - name: build
       run:
         pwd
 
-      if: github.event_name == 'push'
-
-      needs: build_and_test
-
-      steps:
-        - uses: actions/checkout@v2
-        - name: deploy
-          run:
-            pwd
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name = 'push'
+    needs: build_and_test
+    steps:
+      - uses: actions/checkout@v2
+      - name: deploy
+        run: |
+          pwd
 
 
