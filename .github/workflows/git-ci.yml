@@ -29,6 +29,5 @@ jobs:
       - name: deploy
         run: |
           cp ./build/libs/*.jar
-    when: manual
 
 
