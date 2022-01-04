@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'war'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 jar {
@@ -34,13 +35,33 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java' // MySQL
     annotationProcessor 'org.projectlombok:lombok' // Lombok
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2' //JWT
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2' // JWT
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2' // JWT
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // QueryDSL
+    implementation "com.querydsl:querydsl-jpa"
 }
+
+def querydslSrcDir = 'src/main/generated'
+
+querydsl { library = "com.querydsl:querydsl-apt"
+    jpa = true
+    querydslSourcesDir = querydslSrcDir
+}
+
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations { querydsl.extendsFrom compileClasspath }
+
+sourceSets { main { java { srcDirs = ['src/main/java', querydslSrcDir] } } }
+
+tasks.withType(JavaCompile) { options.annotationProcessorGeneratedSourcesDirectory = file(querydslSrcDir) }
 
 test {
     useJUnitPlatform()
