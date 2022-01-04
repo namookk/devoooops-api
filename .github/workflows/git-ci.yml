@@ -12,18 +12,17 @@ on:
   pull_request:
     branches: [ feat/* ]
 jobs:
-  build_and_test:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: build
+    - name: Build with Gradle
       run:
-        pwd
-
+        ./gradlew clean build
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    needs: build_and_test
+    needs: build
     steps:
       - uses: actions/checkout@v2
       - name: deploy
