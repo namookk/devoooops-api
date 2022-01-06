@@ -19,8 +19,8 @@ jobs:
     - name: clean and build
       env:
         PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
-        HOST_NAME: ${{ secrets.HOST  }}
-        USER_NAME: ${{ secrets.USER  }}
+        HOST_NAME: ${{ secrets.HOST_NAME  }}
+        USER_NAME: ${{ secrets.USER_NAME  }}
       run: |
         ./gradlew clean build
     - name: deploy
