@@ -23,10 +23,9 @@ jobs:
         USER_NAME: ${{ secrets.USER_NAME  }}
       run: |
         ./gradlew clean build
-        mkdir -p ~/.ssh/
-        echo "$PRIVATE_KEY" > ../devOooops.pem
-        chmod 600 ../devOooops.pem
-        echo "$HOST_NAME" > ~/.ssh/known_hosts
+        echo "$PRIVATE_KEY" > devOooops.pem
+        cat devOooops.pem
+        chmod 600 devOooops.pem
         scp -i devOooops.pem build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@${{secrets.HOST_NAME}}:/opt/dev-oooops/
         pwd
 
