@@ -21,7 +21,7 @@ jobs:
         ./gradlew clean build
     - name: deploy
       run: |
-        scp -i ${{secrets.KEY}} build/libs/dev-Oooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
+        scp build/libs/dev-Oooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
 
 
 
