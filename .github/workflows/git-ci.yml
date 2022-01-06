@@ -25,6 +25,7 @@ jobs:
         ./gradlew clean build
     - name: deploy
       run: |
+        ssh-keygen -R 3.34.151.172
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         scp -i private_key build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@${{secrets.HOST_NAME}}:/opt/dev-oooops/
         pwd
