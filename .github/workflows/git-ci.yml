@@ -22,7 +22,7 @@ jobs:
     - name: deploy
       run: |
         ls -al
-        cd build
+        cd build/libs/
         ls -al
         scp -i ${{secrets.KEY}} ./build/libs/dev-Ooooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
 
