@@ -21,7 +21,9 @@ jobs:
         ./gradlew clean build
     - name: deploy
       run: |
-        pwd
+        ls -al
+        cd build
+        ls -al
         scp -i ${{secrets.KEY}} ./build/libs/dev-Ooooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
 
 
