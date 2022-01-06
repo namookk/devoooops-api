@@ -21,14 +21,6 @@ jobs:
         ./gradlew clean build
         pwd
         ls -al
-#  deploy:
-#    runs-on: ubuntu-latest
-#    if: github.event_name == 'push'
-    #    needs: build
-        #steps:
-      - #uses: actions/checkout@v2
-      - #name: deploy
-        #run: |
-        #  cp ./build/libs/*.jar
+
 
 
