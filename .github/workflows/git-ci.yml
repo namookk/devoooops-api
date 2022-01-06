@@ -13,12 +13,13 @@ on:
     branches: [ feat/* ]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
     - name: clean and build
       run: |
         ./gradlew clean build
+        pwd
     - name: deploy
       run: |
         scp -i ${{secrets.KEY}} build/libs/dev-Oooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
