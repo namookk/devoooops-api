@@ -13,16 +13,20 @@ on:
     branches: [ feat/* ]
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: clean and build
+      env:
+        PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+        HOSTNAME: ${{ secrets.HOSTNAME  }}
+        USER_NAME: ${{ secrets.USER_NAME  }}
       run: |
         ./gradlew clean build
-        pwd
     - name: deploy
       run: |
-        scp -i ${{secrets.KEY}} build/libs/dev-Oooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
+        echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+        scp -i private_key build/libs/dev-Oooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
 
 
 
