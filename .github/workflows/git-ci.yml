@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - uses: actions/checkout@v2
       - name: deploy
         run: |
           scp -i ${{secrets.KEY}} ./build/libs/dev-Ooooops-api-*.war ${{secrets.USERNAME}}@${{secrets.HOST}}:/opt/dev-oooops/
