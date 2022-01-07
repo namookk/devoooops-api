@@ -27,7 +27,7 @@ jobs:
         cat devOooops.pem
         chmod 600 devOooops.pem
         hostname
-        scp -i devOooops.pem -o StrictHostKeyChecking=no build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@{{secrets.HOST_NAME}}:/opt/dev-oooops/
+        scp -i devOooops.pem -o StrictHostKeyChecking=no build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@${{secrets.HOST_NAME}}:/opt/dev-oooops/
         ssh -i devOooops.pem /opt/dev-oooops/start.sh
 
 
