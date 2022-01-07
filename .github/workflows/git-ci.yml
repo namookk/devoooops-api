@@ -8,15 +8,15 @@
 name: CI/CD
 on:
   push:
-    branches: [ feat/*, feat/** ]
+    branches: [ master ]
   pull_request:
-    branches: [ feat/* ]
+    branches: [ master ]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: clean and build
+    - name: clean and build ans deploy
       env:
         PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
         HOST_NAME: ${{ secrets.HOST_NAME  }}
