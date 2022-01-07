@@ -25,7 +25,7 @@ jobs:
         ./gradlew clean build
         echo "$PRIVATE_KEY" > devOooops.pem
         cat devOooops.pem
-        chmod 600 devOooops.pem
+        chmod 644 devOooops.pem
         scp -i devOooops.pem build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@${{secrets.HOST_NAME}}:/opt/dev-oooops/
         pwd
 
