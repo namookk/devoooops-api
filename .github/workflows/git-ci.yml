@@ -26,7 +26,7 @@ jobs:
         echo "$PRIVATE_KEY" > devOooops.pem
         cat devOooops.pem
         chmod 600 devOooops.pem
-        scp -i devOooops.pem -o StrictHostKeyChecking=no build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@${{secrets.HOST_NAME}}:/opt/dev-oooops/
+        scp -i devOooops.pem -o StrictHostKeyChecking=no build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@3.34.151.172:/opt/dev-oooops/
 
 
 
