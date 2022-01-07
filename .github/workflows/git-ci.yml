@@ -23,6 +23,7 @@ jobs:
         USER_NAME: ${{ secrets.USER_NAME  }}
       run: |
         ./gradlew clean build
+        hostname
   deploy:
     runs-on: ubuntu-latest
     steps:
