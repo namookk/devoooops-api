@@ -1,5 +1,7 @@
 package info.devoooops.controller.auth;
 
+import info.devoooops.common.error.ErrorConst;
+import info.devoooops.common.error.exception.DevUnauthorizedException;
 import info.devoooops.entity.auth.RefreshToken;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.auth.JwtResponse;
@@ -19,10 +21,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Collections;
 
 @RestController
@@ -51,7 +51,6 @@ public class AuthController {
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         JwtResponse response = jwtTokenUtil.generateTokenDto(authentication);
 
@@ -103,4 +102,12 @@ public class AuthController {
         // 토큰 발급
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Tag(name="auth", description = "회원 권한 API")
+    @Operation(summary = "권한 에러 처리 ", description = "권한 에러 처리 ")
+    @GetMapping("/exception")
+    public ResponseEntity<?> exceptionAccessDenied() throws DevUnauthorizedException {
+        throw new DevUnauthorizedException(ErrorConst.REQUIRED_AUTH);
+    }
+
 }
