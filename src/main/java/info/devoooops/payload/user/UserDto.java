@@ -5,7 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 public class UserDto {
@@ -17,10 +21,54 @@ public class UserDto {
     public static class LoginRequest implements Serializable {
         private static final long serialVersionUID = -4364185033878551027L;
 
+        @NotEmpty
         @Schema(description = "회원 아이디(이메일)", example = "aaa@aaa.com")
         private String userId;
 
+        @NotEmpty
         @Schema(description = "패스워드")
         private String password;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SignUpRequest implements Serializable {
+        private static final long serialVersionUID = 3945480539089838473L;
+
+        @NotEmpty
+        @Schema(description = "회원 아이디(이메일)", example = "aaa@aaa.com")
+        private String userId;
+
+        @NotEmpty
+        @Schema(description = "패스워드")
+        private String password;
+
+        @NotEmpty
+        @Schema(description = "이름", example = "홍길동")
+        private String name;
+
+        @NotEmpty
+        @Schema(description = "닉네임", example = "길동쓰")
+        private String nickname;
+
+        //yyyy-mm-dd 형태를 가지는 패턴 조사
+        @Pattern(regexp = "^(19|20)\\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$")
+        @Schema(description = "생년월일", example = "1994-01-01")
+        private String birth_date;
+
+        @NotEmpty
+        @Schema(description = "성별", example = "F or M")
+        private String gender;
+
+        @Schema(description = "개발직군")
+        private String dev_field;
+
+        @Schema(description = "경력")
+        private Integer career;
+
+        @Schema(description = "프로필 이미지 파일")
+        private MultipartFile profileImgFile;
     }
 }

@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 
 @RestController
@@ -35,13 +36,25 @@ public class AuthController {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Tag(name="auth", description = "회원 권한 API")
+    @Operation(summary = "회원가입", description = "사용자 회원가입")
+//    @Parameters({
+//            @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
+//            @Parameter(name = "password", description = "비밀번호", required = true)
+//    })
+    @PostMapping("/signup")
+    public ResponseEntity<String> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
+        return new ResponseEntity<String>("", HttpStatus.OK);
+    }
+
+
+    @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "로그인", description = "사용자 로그인")
     @Parameters({
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
             @Parameter(name = "password", description = "비밀번호", required = true)
     })
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> doLogin(@RequestBody UserDto.LoginRequest authenticationRequest) throws Exception{
+    public ResponseEntity<JwtResponse> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUserId(),
