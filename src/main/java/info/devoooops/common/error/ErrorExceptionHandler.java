@@ -7,6 +7,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -105,6 +106,21 @@ public class ErrorExceptionHandler {
                 .detail(Arrays.deepToString((new Exception()).getStackTrace()))
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    /**
+     * 400 로그인에러
+     * @param e
+     */
+    @ExceptionHandler(value = {BadCredentialsException.class})
+    private ResponseEntity<?> handleBadCredentialsError(BadCredentialsException e) {
+        ErrorResponse error = ErrorResponse
+                .builder()
+                .code(ErrorConst.BAD_CREDENTIAL.getCode())
+                .msg(ErrorConst.BAD_CREDENTIAL.getMsg())
+                .detail(e.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     /**
