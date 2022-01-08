@@ -1,7 +1,22 @@
+spring:
+  profiles:
+    group:
+      default: "localSet"
+      prod: "prodSet"
+---
 server:
   port: 8080
-
 spring:
+
+---
+spring:
+  config:
+    activate:
+      on-profile: localSet
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
@@ -22,10 +37,36 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-logging:
-  level:
-    org.hibernate.type: trace
-
+jwt:
+  secret-key: aW5maW5pdGUtbG9vcC1zdHVkeS1kZXYtT29vb3BzLXByb2plY3Qtc2VjdXJpdHktand0LXNlY3JldC1rZXktZm9yLWF1dGhvcml6YXRpb24K
+---
+spring:
+  config:
+    activate:
+      on-profile: prodSet
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
+    username: devoooops
+    password: devOooops22!
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
 jwt:
   secret-key: aW5maW5pdGUtbG9vcC1zdHVkeS1kZXYtT29vb3BzLXByb2plY3Qtc2VjdXJpdHktand0LXNlY3JldC1rZXktZm9yLWF1dGhvcml6YXRpb24K

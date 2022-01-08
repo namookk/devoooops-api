@@ -16,17 +16,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: clean and build ans deploy
+    - name: clean and build
       env:
         PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
         HOST_NAME: ${{ secrets.HOST_NAME  }}
         USER_NAME: ${{ secrets.USER_NAME  }}
-      run: |
+      run:
         ./gradlew clean build
+    - name: deploy
+      run: |
         echo "$PRIVATE_KEY" > devOooops.pem
-        cat devOooops.pem
         chmod 600 devOooops.pem
-        hostname
         scp -i devOooops.pem -o StrictHostKeyChecking=no build/libs/dev-Oooops-api-*.war ${{secrets.USER_NAME}}@${{secrets.HOST_NAME}}:/opt/dev-oooops/
         ssh -i devOooops.pem ${{secrets.USER_NAME}}@${{secrets.HOST_NAME}} /opt/dev-oooops/start.sh
 
