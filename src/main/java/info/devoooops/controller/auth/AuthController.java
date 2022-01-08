@@ -1,5 +1,7 @@
 package info.devoooops.controller.auth;
 
+import info.devoooops.common.error.ErrorConst;
+import info.devoooops.common.error.exception.DevUnauthorizedException;
 import info.devoooops.entity.auth.RefreshToken;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.auth.JwtResponse;
@@ -19,10 +21,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.Collections;
 
 @RestController
@@ -35,13 +36,25 @@ public class AuthController {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Tag(name="auth", description = "회원 권한 API")
+    @Operation(summary = "회원가입", description = "사용자 회원가입")
+//    @Parameters({
+//            @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
+//            @Parameter(name = "password", description = "비밀번호", required = true)
+//    })
+    @PostMapping("/signup")
+    public ResponseEntity<String> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
+        return new ResponseEntity<String>("", HttpStatus.OK);
+    }
+
+
+    @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "로그인", description = "사용자 로그인")
     @Parameters({
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
             @Parameter(name = "password", description = "비밀번호", required = true)
     })
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> doLogin(@RequestBody UserDto.LoginRequest authenticationRequest) throws Exception{
+    public ResponseEntity<JwtResponse> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUserId(),
@@ -51,7 +64,6 @@ public class AuthController {
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         JwtResponse response = jwtTokenUtil.generateTokenDto(authentication);
 
@@ -103,4 +115,12 @@ public class AuthController {
         // 토큰 발급
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Tag(name="auth", description = "회원 권한 API")
+    @Operation(summary = "권한 에러 처리 ", description = "권한 에러 처리 ")
+    @GetMapping("/exception")
+    public ResponseEntity<?> exceptionAccessDenied() throws DevUnauthorizedException {
+        throw new DevUnauthorizedException(ErrorConst.REQUIRED_AUTH);
+    }
+
 }

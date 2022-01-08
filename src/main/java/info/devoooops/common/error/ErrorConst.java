@@ -9,7 +9,7 @@ public enum ErrorConst {
 
     // -1000 ~ 인증관련
     REQUIRED_AUTH(-1000, "인증이 필요합니다."),
-
+    BAD_CREDENTIAL(-4004, "아이디 및 비밀번호가 일치하지 않습니다."),
     MISSING_REQUIRED_PARAMETER(-2000, "필수 파라미터가 누락 되었습니다."),
     INVALID_PARAMETER_ERROR(-2100, "Invalid Parameter Error"),
 
