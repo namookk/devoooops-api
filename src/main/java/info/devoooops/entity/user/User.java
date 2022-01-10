@@ -1,6 +1,7 @@
 package info.devoooops.entity.user;
 
 import info.devoooops.model.audit.DateAudit;
+import info.devoooops.payload.user.UserDto;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -70,4 +71,21 @@ public class User extends DateAudit {
     @ApiParam(value = "회원상태", required = true)
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    public static User fromSignUpRequest(UserDto.SignUpRequest request){
+        User user = new User();
+        user.cid = request.getCid();
+        user.userId = request.getUserId();
+        user.password = request.getPassword();
+        user.name = request.getName();
+        user.nickname = request.getNickname();
+        user.birthDate = request.getBirthDate();
+        user.gender = request.getGender();
+        user.status = UserStatus.Y;
+        user.devField = request.getDevField();
+        user.career = request.getCareer();
+
+
+        return user;
+    }
 }
