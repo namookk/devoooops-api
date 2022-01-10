@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -135,6 +136,16 @@ class AuthControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
         ;
+    }
+
+    @DisplayName("아이디 중복 체크")
+    @Test
+    void checkDuplicateUserId() throws Exception{
+        this.mvc.perform(get("/auth/check/duplicate")
+                        .param("userId", "papakang22@naver.com"))
+                        .andExpect(status().isConflict())
+                        .andDo(print())
+                        ;
     }
 
     @DisplayName("회원가입 성공 테스트")

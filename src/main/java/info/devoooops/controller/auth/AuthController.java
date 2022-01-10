@@ -52,6 +52,17 @@ public class AuthController {
     }
 
     @Tag(name="auth", description = "회원 권한 API")
+    @Operation(summary = "회원가입시 아이디 중복 체크", description = "아이디 중복 체크")
+    @Parameters({
+            @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
+    })
+    @GetMapping("/check/duplicate")
+    public ResponseEntity<Boolean> checkDuplicate(@RequestParam String userId) throws Exception{
+        Boolean result = userService.checkDuplicate(userId);
+        return new ResponseEntity<Boolean>(result, result ? HttpStatus.OK : HttpStatus.CONFLICT);
+    }
+
+    @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "로그인", description = "사용자 로그인")
     @Parameters({
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),

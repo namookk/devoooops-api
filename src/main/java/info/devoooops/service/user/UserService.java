@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface UserService{
     Optional<User> signUpUser(UserDto.SignUpRequest request) throws Exception;
+    Boolean checkDuplicate(String userId) throws Exception;
 }
