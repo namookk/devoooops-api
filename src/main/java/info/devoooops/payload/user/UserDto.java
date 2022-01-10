@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -38,6 +39,7 @@ public class UserDto {
         private static final long serialVersionUID = 3945480539089838473L;
 
         @NotEmpty
+        @Email
         @Schema(description = "회원 아이디(이메일)", example = "aaa@aaa.com")
         private String userId;
 
@@ -56,19 +58,22 @@ public class UserDto {
         //yyyy-mm-dd 형태를 가지는 패턴 조사
         @Pattern(regexp = "^(19|20)\\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$")
         @Schema(description = "생년월일", example = "1994-01-01")
-        private String birth_date;
+        private String birthDate;
 
-        @NotEmpty
+        @Pattern(regexp="[_M|F]{1}")
         @Schema(description = "성별", example = "F or M")
         private String gender;
 
         @Schema(description = "개발직군")
-        private String dev_field;
+        private String devField;
 
         @Schema(description = "경력")
         private Integer career;
 
         @Schema(description = "프로필 이미지 파일")
         private MultipartFile profileImgFile;
+
+        @Schema(description = "cid")
+        private String cid;
     }
 }

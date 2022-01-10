@@ -26,8 +26,4 @@ public class UserController {
         return (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    @GetMapping("/{cid}")
-    public User findById(@PathVariable String cid) throws Exception{
-        return userService.findById(cid);
-    }
 }

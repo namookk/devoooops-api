@@ -1,7 +1,10 @@
 package info.devoooops.service.user;
 
 import info.devoooops.entity.user.User;
+import info.devoooops.payload.user.UserDto;
+
+import java.util.Optional;
 
 public interface UserService{
-    User findById(String cid) throws Exception;
+    Optional<User> signUpUser(UserDto.SignUpRequest request) throws Exception;
 }

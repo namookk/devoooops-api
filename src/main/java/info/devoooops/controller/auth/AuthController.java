@@ -1,13 +1,16 @@
 package info.devoooops.controller.auth;
 
 import info.devoooops.common.error.ErrorConst;
+import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.common.error.exception.DevUnauthorizedException;
 import info.devoooops.entity.auth.RefreshToken;
+import info.devoooops.entity.user.User;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.auth.JwtResponse;
 import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.auth.RefreshTokenRepository;
+import info.devoooops.service.user.UserService;
 import info.devoooops.util.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,6 +37,7 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenUtil jwtTokenUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserService userService;
 
     @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "회원가입", description = "사용자 회원가입")
@@ -42,10 +46,10 @@ public class AuthController {
 //            @Parameter(name = "password", description = "비밀번호", required = true)
 //    })
     @PostMapping("/signup")
-    public ResponseEntity<String> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
-        return new ResponseEntity<String>("", HttpStatus.OK);
+    public ResponseEntity<User> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
+        return new ResponseEntity<User>(userService.signUpUser(signUpRequest)
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR)), HttpStatus.OK);
     }
-
 
     @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "로그인", description = "사용자 로그인")
