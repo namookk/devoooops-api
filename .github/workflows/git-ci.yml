@@ -12,18 +12,16 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build:
+  ci-cd:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: clean and build
-      env:
-        PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
-        HOST_NAME: ${{ secrets.HOST_NAME  }}
-        USER_NAME: ${{ secrets.USER_NAME  }}
       run:
         ./gradlew clean build
     - name: deploy
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
       run: |
         echo "$PRIVATE_KEY" > devOooops.pem
         chmod 600 devOooops.pem
