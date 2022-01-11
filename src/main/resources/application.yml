@@ -1,13 +1,11 @@
 spring:
   profiles:
     group:
-      default: "localSet"
-      prod: "prodSet"
+      default: "localSet, commonDbSet"
+      prod: "prodSet, commonDbSet"
 ---
 server:
   port: 8080
-spring:
-
 ---
 spring:
   config:
@@ -17,11 +15,6 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
-    username: devoooops
-    password: devOooops22!
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -48,11 +41,6 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
-    username: devoooops
-    password: devOooops22!
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -70,3 +58,13 @@ spring:
         format_sql: true
 jwt:
   secret-key: aW5maW5pdGUtbG9vcC1zdHVkeS1kZXYtT29vb3BzLXByb2plY3Qtc2VjdXJpdHktand0LXNlY3JldC1rZXktZm9yLWF1dGhvcml6YXRpb24K
+---
+spring:
+  config:
+    activate:
+      on-profile: commonDbSet
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
+    username: devoooops
+    password: devOooops22!
