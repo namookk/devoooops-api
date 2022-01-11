@@ -4,14 +4,12 @@ import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.common.error.exception.DevUnauthorizedException;
 import info.devoooops.entity.auth.AuthToken;
-import info.devoooops.entity.auth.RefreshToken;
 import info.devoooops.entity.user.User;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.auth.JwtResponse;
 import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.auth.AuthTokenRepository;
-import info.devoooops.repository.auth.RefreshTokenRepository;
 import info.devoooops.service.user.UserService;
 import info.devoooops.util.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

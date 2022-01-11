@@ -65,5 +65,5 @@ sourceSets { main { java { srcDirs = ['src/main/java', querydslSrcDir] } } }
 tasks.withType(JavaCompile) { options.annotationProcessorGeneratedSourcesDirectory = file(querydslSrcDir) }
 
 test {
-    useJUnitPlatform()
+    //useJUnitPlatform()
 }
