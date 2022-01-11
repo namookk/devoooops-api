@@ -1,7 +1,9 @@
 package info.devoooops.util;
 
+import info.devoooops.entity.auth.AuthToken;
 import info.devoooops.payload.auth.JwtResponse;
 import info.devoooops.payload.auth.UserPrincipal;
+import info.devoooops.repository.auth.AuthTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -14,10 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,10 +28,11 @@ public class JwtTokenUtil {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
     private final Key key;
-
-    public JwtTokenUtil(@Value("${jwt.secret-key}") String secretKey) {
+    private final AuthTokenRepository authTokenRepository;
+    public JwtTokenUtil(@Value("${jwt.secret-key}") String secretKey, AuthTokenRepository authTokenRepository) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.authTokenRepository = authTokenRepository;
     }
 
     public JwtResponse generateTokenDto(Authentication authentication) {
@@ -89,7 +89,9 @@ public class JwtTokenUtil {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            Optional<AuthToken> accessTokenOptional = authTokenRepository.findByAccessToken(token);
+            Optional<AuthToken> refreshTokenOptional = authTokenRepository.findByRefreshToken(token);
+            return accessTokenOptional.isPresent() || refreshTokenOptional.isPresent();
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {

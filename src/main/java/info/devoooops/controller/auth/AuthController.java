@@ -3,12 +3,14 @@ package info.devoooops.controller.auth;
 import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.common.error.exception.DevUnauthorizedException;
+import info.devoooops.entity.auth.AuthToken;
 import info.devoooops.entity.auth.RefreshToken;
 import info.devoooops.entity.user.User;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.auth.JwtResponse;
 import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
+import info.devoooops.repository.auth.AuthTokenRepository;
 import info.devoooops.repository.auth.RefreshTokenRepository;
 import info.devoooops.service.user.UserService;
 import info.devoooops.util.JwtTokenUtil;
@@ -24,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -36,7 +39,7 @@ import java.util.Collections;
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenUtil jwtTokenUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthTokenRepository authTokenRepository;
     private final UserService userService;
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -82,17 +85,38 @@ public class AuthController {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         JwtResponse response = jwtTokenUtil.generateTokenDto(authentication);
 
-        // 4. refresh token 저장
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
-        RefreshToken refreshToken = RefreshToken.builder()
-                .cid(principal.getCid())
+        String cid = principal.getCid();
+
+        // 4. token db 저장
+        AuthToken authToken = AuthToken.builder()
+                .cid(cid)
+                .accessToken(response.getAccessToken())
                 .refreshToken(response.getRefreshToken())
                 .build();
 
-        refreshTokenRepository.save(refreshToken);
+        authTokenRepository.save(authToken);
 
         // 5. 토큰 발급
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Tag(name="auth", description = "회원 권한 API")
+    @Operation(summary = "로그아웃", description = "로그아웃")
+    @Parameters({
+            @Parameter(name = "accessToken", description = "기존에 발급받은 Access Token 값", required = true),
+            @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<Boolean> doLogout(@RequestBody JwtRequest tokenRequestDto) throws Exception{
+        if (!jwtTokenUtil.validateToken(tokenRequestDto.getAccessToken())) {
+            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+        }
+        Authentication authentication = jwtTokenUtil.getAuthentication(tokenRequestDto.getAccessToken());
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        String cid = principal.getCid();
+        authTokenRepository.deleteById(cid);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -113,11 +137,11 @@ public class AuthController {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken refreshToken = refreshTokenRepository.findById(principal.getCid())
+        AuthToken authToken = authTokenRepository.findById(principal.getCid())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getRefreshToken().equals(tokenRequestDto.getRefreshToken())) {
+        if (!authToken.getRefreshToken().equals(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
@@ -125,7 +149,7 @@ public class AuthController {
         JwtResponse response = jwtTokenUtil.generateTokenDto(authentication);
 
         // 6. 저장소 정보 업데이트
-        refreshToken.updateToken(response.getRefreshToken());
+        authToken.updateToken(response.getAccessToken(), response.getRefreshToken());
 
         // 토큰 발급
         return new ResponseEntity<>(response, HttpStatus.OK);
