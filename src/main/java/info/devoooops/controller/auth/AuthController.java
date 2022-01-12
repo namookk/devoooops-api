@@ -11,6 +11,7 @@ import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.auth.AuthTokenRepository;
 import info.devoooops.service.user.UserService;
+import info.devoooops.util.ApiUtils;
 import info.devoooops.util.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -46,9 +47,9 @@ public class AuthController {
 //            @Parameter(name = "password", description = "비밀번호", required = true)
 //    })
     @PostMapping("/signup")
-    public ResponseEntity<User> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
-        return new ResponseEntity<User>(userService.signUpUser(signUpRequest)
-                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR)), HttpStatus.OK);
+    public ApiUtils.ApiResult<?> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
+        return ApiUtils.success(userService.signUpUser(signUpRequest)
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR)));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -57,9 +58,13 @@ public class AuthController {
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
     })
     @GetMapping("/check/duplicate")
-    public ResponseEntity<Boolean> checkDuplicate(@RequestParam String userId) throws Exception{
+    public ApiUtils.ApiResult<?> checkDuplicate(@RequestParam String userId) throws Exception{
         Boolean result = userService.checkDuplicate(userId);
-        return new ResponseEntity<Boolean>(result, result ? HttpStatus.OK : HttpStatus.CONFLICT);
+        if(result){
+            return ApiUtils.success(result);
+        }else{
+            return ApiUtils.error("아이디가 중복되었습니다.", HttpStatus.CONFLICT.value(), null);
+        }
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -69,7 +74,7 @@ public class AuthController {
             @Parameter(name = "password", description = "비밀번호", required = true)
     })
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
+    public ApiUtils.ApiResult<?> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUserId(),
@@ -95,7 +100,7 @@ public class AuthController {
         authTokenRepository.save(authToken);
 
         // 5. 토큰 발급
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ApiUtils.success(response);
     }
 
     @Tag(name="auth", description = "회원 권한 API")

@@ -33,6 +33,7 @@ dependencies {
     implementation 'io.springfox:springfox-boot-starter:3.0.0' // Swagger
     implementation 'org.modelmapper:modelmapper:2.4.5' // Model Mapper
     implementation 'org.projectlombok:lombok:1.18.20' // Lombok
+    implementation 'org.apache.commons:commons-lang3:3.12.0' // apach-common-lang
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java' // MySQL
     annotationProcessor 'org.projectlombok:lombok' // Lombok
