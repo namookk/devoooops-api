@@ -11,6 +11,7 @@ import info.devoooops.payload.auth.JwtResponse;
 import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.auth.AuthTokenRepository;
+import info.devoooops.service.auth.AuthService;
 import info.devoooops.service.user.UserService;
 import info.devoooops.util.ApiUtils;
 import info.devoooops.util.JwtTokenUtil;
@@ -36,10 +37,8 @@ import java.util.Collections;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final AuthTokenRepository authTokenRepository;
     private final UserService userService;
+    private final AuthService authService;
 
     @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "회원가입", description = "사용자 회원가입")
@@ -72,32 +71,7 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<ApiUtils.ApiResult<?>> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
-        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                authenticationRequest.getUserId(),
-                authenticationRequest.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-        );
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        JwtResponse response = jwtTokenUtil.generateTokenDto(authentication);
-
-        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
-        String cid = principal.getCid();
-
-        // 4. token db 저장
-        AuthToken authToken = AuthToken.builder()
-                .cid(cid)
-                .accessToken(response.getAccessToken())
-                .refreshToken(response.getRefreshToken())
-                .build();
-
-        authTokenRepository.save(authToken);
-
-        // 5. 토큰 발급
-        return ResponseEntity.ok(ApiUtils.success(response));
+        return ResponseEntity.ok(ApiUtils.success(authService.doLogin(authenticationRequest)));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -108,14 +82,8 @@ public class AuthController {
     })
     @PostMapping("/logout")
     public ResponseEntity<ApiUtils.ApiResult<?>> doLogout(@RequestBody JwtRequest tokenRequestDto) throws Exception{
-        if (!jwtTokenUtil.validateToken(tokenRequestDto.getAccessToken())) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
-        }
-        Authentication authentication = jwtTokenUtil.getAuthentication(tokenRequestDto.getAccessToken());
-        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
-        String cid = principal.getCid();
-        authTokenRepository.deleteById(cid);
-        return ResponseEntity.ok(ApiUtils.success(true));
+        authService.doLogout(tokenRequestDto);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -125,33 +93,8 @@ public class AuthController {
             @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
     })
     @PostMapping("/refresh")
-    public ResponseEntity<ApiUtils.ApiResult<?>> doLogin(@RequestBody JwtRequest tokenRequestDto) throws Exception{
-        // 1. Refresh Token 검증
-        if (!jwtTokenUtil.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
-        }
-
-        // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = jwtTokenUtil.getAuthentication(tokenRequestDto.getAccessToken());
-        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
-
-        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        AuthToken authToken = authTokenRepository.findById(principal.getCid())
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
-
-        // 4. Refresh Token 일치하는지 검사
-        if (!authToken.getRefreshToken().equals(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
-        }
-
-        // 5. 새로운 토큰 생성
-        JwtResponse response = jwtTokenUtil.generateTokenDto(authentication);
-
-        // 6. 저장소 정보 업데이트
-        authToken.updateToken(response.getAccessToken(), response.getRefreshToken());
-
-        // 토큰 발급
-        return ResponseEntity.ok(ApiUtils.success(response));
+    public ResponseEntity<ApiUtils.ApiResult<?>> reissueToken(@RequestBody JwtRequest tokenRequestDto) throws Exception{
+        return ResponseEntity.ok(ApiUtils.success(authService.reissueToken(tokenRequestDto)));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
