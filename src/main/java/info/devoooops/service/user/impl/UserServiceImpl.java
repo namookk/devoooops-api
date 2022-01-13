@@ -37,15 +37,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> signUpUser(UserDto.SignUpRequest request) throws DevException{
         checkDuplicate(request.getUserId());
-        
+
         User user = userRepository.save(this.getUserFromSignUpRequest(request));
         return Optional.of(user);
     }
 
     @Override
     public Boolean checkDuplicate(String userId) throws DevRuntimeException {
-        Optional<User> result = userRepository.findByUserId(userId);
-        result.ifPresent(user -> {
+        userRepository.findByUserId(userId)
+                .ifPresent(user -> {
             throw new DevRuntimeException(ErrorConst.DUPLICATE_ID);
         });
         return true;
