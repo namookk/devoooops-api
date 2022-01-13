@@ -13,6 +13,9 @@ public enum ErrorConst {
     MISSING_REQUIRED_PARAMETER(-2000, "필수 파라미터가 누락 되었습니다."),
     INVALID_PARAMETER_ERROR(-2100, "Invalid Parameter Error"),
 
+    // -3000 ~ -3999 로그인 관련
+    DUPLICATE_ID(-3000, "중복된 아이디입니다."),
+
     UNKNOWN_ERROR(-9999, "알 수 없는 에러가 발생했습니다.");
 
     private int code;

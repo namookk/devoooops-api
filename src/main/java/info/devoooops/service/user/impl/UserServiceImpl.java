@@ -3,12 +3,14 @@ package info.devoooops.service.user.impl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevBadRequestException;
+import info.devoooops.common.error.exception.DevException;
 import info.devoooops.entity.user.User;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.user.UserRepository;
 import info.devoooops.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean checkDuplicate(String userId) throws Exception{
-        return userRepository.findByUserId(userId).isEmpty();
+    public Boolean checkDuplicate(String userId) throws DevException {
+        if (userRepository.findByUserId(userId).isEmpty()) {
+            throw new DevException(ErrorConst.DUPLICATE_ID);
+        } else {
+            return true;
+        }
     }
 }

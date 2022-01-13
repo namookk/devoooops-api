@@ -1,6 +1,7 @@
 package info.devoooops.controller.auth;
 
 import info.devoooops.common.error.ErrorConst;
+import info.devoooops.common.error.exception.DevException;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.common.error.exception.DevUnauthorizedException;
 import info.devoooops.entity.auth.AuthToken;
@@ -58,13 +59,8 @@ public class AuthController {
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
     })
     @GetMapping("/check/duplicate")
-    public ApiUtils.ApiResult<?> checkDuplicate(@RequestParam String userId) throws Exception{
-        Boolean result = userService.checkDuplicate(userId);
-        if(result){
-            return ApiUtils.success(result);
-        }else{
-            return ApiUtils.error("아이디가 중복되었습니다.", HttpStatus.CONFLICT.value(), null);
-        }
+    public ResponseEntity<?> checkDuplicate(@RequestParam String userId) throws DevException {
+        return ResponseEntity.ok(userService.checkDuplicate(userId));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
