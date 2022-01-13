@@ -67,7 +67,7 @@ public class UserPrincipal implements UserDetails {
                 .userId((String)map.get("userId"))
                 .name((String)map.get("name"))
                 .nickname((String)map.get("nickname"))
-                //.status((UserStatus)map.get("status"))
+                .status(UserStatus.valueOf((String)map.get("status")))
                 .gender((String)map.get("gender"))
                 .birthDate((String)map.get("birthDate"))
                 .build();
