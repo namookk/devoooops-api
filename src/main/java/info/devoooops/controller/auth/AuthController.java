@@ -110,7 +110,7 @@ public class AuthController {
             @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
     })
     @PostMapping("/logout")
-    public ResponseEntity<Boolean> doLogout(@RequestBody JwtRequest tokenRequestDto) throws Exception{
+    public ApiUtils.ApiResult<?> doLogout(@RequestBody JwtRequest tokenRequestDto) throws Exception{
         if (!jwtTokenUtil.validateToken(tokenRequestDto.getAccessToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
@@ -118,7 +118,7 @@ public class AuthController {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         String cid = principal.getCid();
         authTokenRepository.deleteById(cid);
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        return ApiUtils.success(true);
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -128,7 +128,7 @@ public class AuthController {
             @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
     })
     @PostMapping("/refresh")
-    public ResponseEntity<JwtResponse> doLogin(@RequestBody JwtRequest tokenRequestDto) throws Exception{
+    public ApiUtils.ApiResult<?> doLogin(@RequestBody JwtRequest tokenRequestDto) throws Exception{
         // 1. Refresh Token 검증
         if (!jwtTokenUtil.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
@@ -154,13 +154,13 @@ public class AuthController {
         authToken.updateToken(response.getAccessToken(), response.getRefreshToken());
 
         // 토큰 발급
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ApiUtils.success(response);
     }
 
     @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "권한 에러 처리 ", description = "권한 에러 처리 ")
     @GetMapping("/exception")
-    public ResponseEntity<?> exceptionAccessDenied() throws DevUnauthorizedException {
+    public ApiUtils.ApiResult<?> exceptionAccessDenied() throws DevUnauthorizedException {
         throw new DevUnauthorizedException(ErrorConst.REQUIRED_AUTH);
     }
 
