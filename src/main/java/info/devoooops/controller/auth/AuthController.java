@@ -48,9 +48,9 @@ public class AuthController {
 //            @Parameter(name = "password", description = "비밀번호", required = true)
 //    })
     @PostMapping("/signup")
-    public ApiUtils.ApiResult<?> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
-        return ApiUtils.success(userService.signUpUser(signUpRequest)
-                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR)));
+    public ResponseEntity<ApiUtils.ApiResult<?>> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
+        return ResponseEntity.ok(ApiUtils.success(userService.signUpUser(signUpRequest)
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR))));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -71,7 +71,7 @@ public class AuthController {
             @Parameter(name = "password", description = "비밀번호", required = true)
     })
     @PostMapping("/login")
-    public ApiUtils.ApiResult<?> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
+    public ResponseEntity<ApiUtils.ApiResult<?>> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUserId(),
@@ -97,7 +97,7 @@ public class AuthController {
         authTokenRepository.save(authToken);
 
         // 5. 토큰 발급
-        return ApiUtils.success(response);
+        return ResponseEntity.ok(ApiUtils.success(response));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -107,7 +107,7 @@ public class AuthController {
             @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
     })
     @PostMapping("/logout")
-    public ApiUtils.ApiResult<?> doLogout(@RequestBody JwtRequest tokenRequestDto) throws Exception{
+    public ResponseEntity<ApiUtils.ApiResult<?>> doLogout(@RequestBody JwtRequest tokenRequestDto) throws Exception{
         if (!jwtTokenUtil.validateToken(tokenRequestDto.getAccessToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
@@ -115,7 +115,7 @@ public class AuthController {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         String cid = principal.getCid();
         authTokenRepository.deleteById(cid);
-        return ApiUtils.success(true);
+        return ResponseEntity.ok(ApiUtils.success(true));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
@@ -125,7 +125,7 @@ public class AuthController {
             @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
     })
     @PostMapping("/refresh")
-    public ApiUtils.ApiResult<?> doLogin(@RequestBody JwtRequest tokenRequestDto) throws Exception{
+    public ResponseEntity<ApiUtils.ApiResult<?>> doLogin(@RequestBody JwtRequest tokenRequestDto) throws Exception{
         // 1. Refresh Token 검증
         if (!jwtTokenUtil.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
@@ -151,13 +151,13 @@ public class AuthController {
         authToken.updateToken(response.getAccessToken(), response.getRefreshToken());
 
         // 토큰 발급
-        return ApiUtils.success(response);
+        return ResponseEntity.ok(ApiUtils.success(response));
     }
 
     @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "권한 에러 처리 ", description = "권한 에러 처리 ")
     @GetMapping("/exception")
-    public ApiUtils.ApiResult<?> exceptionAccessDenied() throws DevUnauthorizedException {
+    public ResponseEntity<ApiUtils.ApiResult<?>> exceptionAccessDenied() throws DevUnauthorizedException {
         throw new DevUnauthorizedException(ErrorConst.REQUIRED_AUTH);
     }
 
