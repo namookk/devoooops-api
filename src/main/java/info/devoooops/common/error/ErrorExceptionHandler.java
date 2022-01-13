@@ -25,13 +25,15 @@ import static info.devoooops.util.ApiUtils.error;
 public class ErrorExceptionHandler {
 
     private ResponseEntity<ApiUtils.ApiResult<?>> newResponse(ErrorResponse errorResponse, HttpStatus status) {
-        return newResponse(errorResponse.getMsg(), status, errorResponse.getCode(), errorResponse.getDetail());
-    }
-
-    private ResponseEntity<ApiUtils.ApiResult<?>> newResponse(String message, HttpStatus status, int code, String details) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
-        return new ResponseEntity<>(error(message, code, details), headers, status);
+        return new ResponseEntity<>(error(errorResponse), headers, status);
+    }
+
+    private ResponseEntity<ApiUtils.ApiResult<?>> newResponse(String message, HttpStatus status, String details) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        return new ResponseEntity<>(error(status, message, details), headers, status);
     }
 
     /**
@@ -179,6 +181,21 @@ public class ErrorExceptionHandler {
                 .code(e.getCode())
                 .msg(e.getMessage())
                 .detail(Arrays.deepToString(new Exception().getStackTrace()))
+                .build();
+        return newResponse(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    /**
+     * 500 서버 에러
+     * @param e
+     */
+    @ExceptionHandler(value = {DevException.class})
+    private ResponseEntity<?> handleDevExceptionError(DevException e) {
+        ErrorResponse error = ErrorResponse
+                .builder()
+                .code(e.getCode())
+                .msg(e.getMessage())
                 .build();
         return newResponse(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }

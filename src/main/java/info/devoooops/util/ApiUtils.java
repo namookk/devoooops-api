@@ -1,77 +1,59 @@
 package info.devoooops.util;
 
+import info.devoooops.common.error.ErrorConst;
+import info.devoooops.common.error.ErrorResponse;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
+import org.springframework.http.HttpStatus;
 
 
 public class ApiUtils {
 
     public static <T> ApiResult<T> success(T response) {
-        return new ApiResult<>(true, response, null);
+        return new ApiResult<>(HttpStatus.OK, "정상적으로 처리되었습니다.", response);
     }
 
-    public static ApiResult<?> error(String message, int code, String details) {
-        return new ApiResult<>(false, null, new ApiError(message, code, details));
+    public static ApiResult<?> error(ErrorConst errorConst, String details) {
+        return new ApiResult<>(errorConst.getCode(), errorConst.getMsg(), null, details);
     }
 
-    public static class ApiError {
-        private final int status;
-        private final String message;
-        private final String details;
-
-        ApiError(String message, int code, String details){
-            this.message = message;
-            this.status = code;
-            this.details = details;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        @Override
-        public String toString() {
-            return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                    .append("message", message)
-                    .append("status", status)
-                    .toString();
-        }
+    public static ApiResult<?> error(HttpStatus status, String message, String details) {
+        return new ApiResult<>(status, message, null, details);
     }
 
+    public static ApiResult<?> error(ErrorResponse errorResponse) {
+        return new ApiResult<>(errorResponse.getCode(), errorResponse.getMsg(), null, errorResponse.getDetail());
+    }
+
+    @Getter
     public static class ApiResult<T> {
-        private final boolean success;
+        private final int code;
+        private final String message;
         private final T response;
-        private final ApiError error;
+        private final String error;
 
-        private ApiResult(boolean success, T response, ApiError error) {
-            this.success = success;
+        private ApiResult(HttpStatus status, String message, T response) {
+            this(status.value(), message, response, null);
+        }
+
+        private ApiResult(HttpStatus status, String message, T response, String error) {
+            this(status.value(), message, response, error);
+        }
+
+        private ApiResult(int code, String message, T response, String error) {
+            this.code = code;
+            this.message = message;
             this.response = response;
             this.error = error;
         }
 
-        public boolean isSuccess() {
-            return success;
-        }
-
-        public ApiError getError() {
-            return error;
-        }
-
-        public T getResponse() {
-            return response;
-        }
-
         @Override
         public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                    .append("success", success)
+                    .append("code", code)
+                    .append("message", message)
                     .append("response", response)
-                    .append("error", error)
                     .toString();
         }
     }

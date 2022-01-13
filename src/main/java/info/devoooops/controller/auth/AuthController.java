@@ -59,8 +59,12 @@ public class AuthController {
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
     })
     @GetMapping("/check/duplicate")
-    public ResponseEntity<?> checkDuplicate(@RequestParam String userId) throws DevException {
-        return ResponseEntity.ok(userService.checkDuplicate(userId));
+    public ApiUtils.ApiResult<?> checkDuplicate(@RequestParam String userId) throws DevException {
+        if(userService.checkDuplicate(userId)){
+            return ApiUtils.success(null);
+        }else{
+            return ApiUtils.error(ErrorConst.DUPLICATE_ID, null);
+        }
     }
 
     @Tag(name="auth", description = "회원 권한 API")

@@ -37,7 +37,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> signUpUser(UserDto.SignUpRequest request) throws Exception{
-        if(!checkDuplicate(request.getUserId())) throw new DevBadRequestException(ErrorConst.INVALID_PARAMETER_ERROR);
+        if(!checkDuplicate(request.getUserId())) {
+            throw new DevException(ErrorConst.DUPLICATE_ID);
+        }
+
         User user = userRepository.save(this.getUserFromSignUpRequest(request));
         return Optional.of(user);
     }
@@ -54,10 +57,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean checkDuplicate(String userId) throws DevException {
-        if (userRepository.findByUserId(userId).isEmpty()) {
-            throw new DevException(ErrorConst.DUPLICATE_ID);
-        } else {
-            return true;
-        }
+        return !userRepository.findByUserId(userId).isPresent();
     }
 }
