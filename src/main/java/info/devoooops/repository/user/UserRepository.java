@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, String> {
+public interface UserRepository extends CrudRepository<User, String>{
     Optional<User> findByUserId(String userId);
 
     @Query(value = "select fnc_newcid()", nativeQuery = true)

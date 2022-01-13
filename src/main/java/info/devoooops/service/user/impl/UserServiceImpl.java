@@ -2,15 +2,14 @@ package info.devoooops.service.user.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import info.devoooops.common.error.ErrorConst;
-import info.devoooops.common.error.exception.DevBadRequestException;
 import info.devoooops.common.error.exception.DevException;
+import info.devoooops.common.error.exception.DevRuntimeException;
 import info.devoooops.entity.user.User;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.user.UserRepository;
 import info.devoooops.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +35,20 @@ public class UserServiceImpl implements UserService {
 //    }
 
     @Override
-    public Optional<User> signUpUser(UserDto.SignUpRequest request) throws Exception{
-        if(!checkDuplicate(request.getUserId())) {
-            throw new DevException(ErrorConst.DUPLICATE_ID);
-        }
-
+    public Optional<User> signUpUser(UserDto.SignUpRequest request) throws DevException{
+        checkDuplicate(request.getUserId());
+        
         User user = userRepository.save(this.getUserFromSignUpRequest(request));
         return Optional.of(user);
+    }
+
+    @Override
+    public Boolean checkDuplicate(String userId) throws DevRuntimeException {
+        Optional<User> result = userRepository.findByUserId(userId);
+        result.ifPresent(user -> {
+            throw new DevRuntimeException(ErrorConst.DUPLICATE_ID);
+        });
+        return true;
     }
 
     private User getUserFromSignUpRequest(UserDto.SignUpRequest request){
@@ -53,10 +59,5 @@ public class UserServiceImpl implements UserService {
         request.setCid(userRepository.getNewCid());
 
         return User.fromSignUpRequest(request);
-    }
-
-    @Override
-    public Boolean checkDuplicate(String userId) throws DevException {
-        return !userRepository.findByUserId(userId).isPresent();
     }
 }

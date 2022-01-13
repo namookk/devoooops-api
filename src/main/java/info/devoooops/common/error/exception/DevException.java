@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.Optional;
 
 @Getter
-public class DevException extends Exception {
+public class DevException extends Exception{
 
     private int code;
 

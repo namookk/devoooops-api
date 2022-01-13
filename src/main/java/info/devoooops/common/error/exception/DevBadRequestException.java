@@ -4,6 +4,11 @@ import info.devoooops.common.error.ErrorConst;
 
 public class DevBadRequestException extends DevException{
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     public DevBadRequestException(ErrorConst errorConst, Throwable cause) {
         super(errorConst, cause);
     }
@@ -12,7 +17,18 @@ public class DevBadRequestException extends DevException{
         super(errorConst);
     }
 
-    public DevBadRequestException(ErrorConst errorConst, String customMsg) {
-        super(errorConst,customMsg);
+    public DevBadRequestException(String errorConst) {
+        super(errorConst);
     }
+
+    public DevBadRequestException(String prefix, ErrorConst errorConst, String suffix) {
+        super(prefix, errorConst, suffix);
+    }
+
+
+
+
+
+
+
 }
