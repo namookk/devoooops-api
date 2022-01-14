@@ -98,6 +98,18 @@ public class AuthController {
     }
 
     @Tag(name="auth", description = "회원 권한 API")
+    @Operation(summary = "비밀번호 찾기", description = "비밀번호 찾기")
+    @Parameters({
+            @Parameter(name = "userId", description = "유저 아이디(이메일)", required = true),
+            @Parameter(name = "name", description = "유저 이름", required = true)
+    })
+    @GetMapping("/find/password")
+    public ResponseEntity<ApiUtils.ApiResult<?>> doLogout(@RequestParam String userId, @RequestParam String name) throws Exception{
+        userService.findPassword(userId, name);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @Tag(name="auth", description = "회원 권한 API")
     @Operation(summary = "권한 에러 처리 ", description = "권한 에러 처리 ")
     @GetMapping("/exception")
     public ResponseEntity<ApiUtils.ApiResult<?>> exceptionAccessDenied() throws DevUnauthorizedException {

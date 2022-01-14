@@ -1,5 +1,9 @@
 package info.devoooops.payload.auth;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import info.devoooops.entity.user.UserStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +28,9 @@ public class UserPrincipal implements UserDetails {
     private String gender;
     private UserStatus status;
     private String password;
+
+    @JsonDeserialize(using = InstantDeserializer.class)
+    @JsonSerialize(using = InstantSerializer.class)
     private Instant passwordDate;
     private String birthDate;
     private String devField;
@@ -62,6 +69,7 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal fromToken(LinkedHashMap<String, Object> map){
+        System.out.println("============== " + map.get("passwordDate").getClass().getName());
         return UserPrincipal.builder()
                 .cid((String)map.get("cid"))
                 .userId((String)map.get("userId"))

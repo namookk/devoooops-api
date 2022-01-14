@@ -9,8 +9,36 @@ import info.devoooops.payload.user.UserDto;
 import java.util.Optional;
 
 public interface UserService{
+    /**
+     * @param request
+     * @return
+     * @throws DevException
+     */
     Optional<User> signUpUser(UserDto.SignUpRequest request) throws DevException;
+
+    /**
+     * @param userId
+     * @return
+     * @throws DevRuntimeException
+     */
     Boolean checkDuplicate(String userId) throws DevRuntimeException;
+
+    /**
+     * @return
+     * @throws Exception
+     */
     Optional<UserPrincipal> getMyInfo() throws Exception;
+
+    /**
+     * @param password
+     * @throws Exception
+     */
     void checkPassword(String password) throws Exception;
+
+    /**
+     * @param userId
+     * @param name
+     * @throws Exception
+     */
+    void findPassword(String userId, String name) throws Exception;
 }

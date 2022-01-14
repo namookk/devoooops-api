@@ -8,13 +8,17 @@ import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.user.UserRepository;
 import info.devoooops.service.user.UserService;
+import info.devoooops.util.MailUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.Optional;
 
 @Service
@@ -24,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory;
     private final PasswordEncoder passwordEncoder;
+    private final MailUtil mailUtil;
 //    @Override
 //    public User findById(String cid) throws Exception{
 //
@@ -81,4 +86,19 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
     }
+
+    @Override
+    public void findPassword(String userId, String name) throws Exception {
+        User user = userRepository.findByUserIdAndName(userId, name)
+                .orElseThrow(() -> new UsernameNotFoundException("유저 정보를 찾을 수 없습니다."));
+
+        String tempPassword = RandomStringUtils.randomAlphanumeric(8);
+
+        mailUtil.sendMail(userId, "임시 비밀번호입니다.", "임시 비밀번호 : " + tempPassword);
+
+        String encodePassword = passwordEncoder.encode(tempPassword);
+        user.updatePassword(encodePassword);
+        userRepository.save(user);
+    }
+
 }

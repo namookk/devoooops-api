@@ -1,6 +1,7 @@
 package info.devoooops.service.auth.impl;
 
 import info.devoooops.entity.auth.AuthToken;
+import info.devoooops.entity.user.User;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.auth.JwtResponse;
 import info.devoooops.payload.auth.UserPrincipal;

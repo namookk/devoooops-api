@@ -88,4 +88,9 @@ public class User extends DateAudit {
 
         return user;
     }
+
+    public void updatePassword(String password){
+        this.password = password;
+        this.passwordDate = Instant.now();
+    }
 }
