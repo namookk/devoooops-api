@@ -2,14 +2,16 @@ package info.devoooops.service.user.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import info.devoooops.common.error.ErrorConst;
-import info.devoooops.common.error.exception.DevException;
-import info.devoooops.common.error.exception.DevRuntimeException;
+import info.devoooops.common.error.exception.*;
 import info.devoooops.entity.user.User;
+import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.user.UserRepository;
 import info.devoooops.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +48,8 @@ public class UserServiceImpl implements UserService {
     public Boolean checkDuplicate(String userId) throws DevRuntimeException {
         userRepository.findByUserId(userId)
                 .ifPresent(user -> {
-            throw new DevRuntimeException(ErrorConst.DUPLICATE_ID);
-        });
+                    throw new DevRuntimeException(ErrorConst.DUPLICATE_ID);
+                });
         return true;
     }
 
@@ -59,5 +61,24 @@ public class UserServiceImpl implements UserService {
         request.setCid(userRepository.getNewCid());
 
         return User.fromSignUpRequest(request);
+    }
+
+    @Override
+    public Optional<UserPrincipal> getMyInfo() throws Exception {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return Optional.of(userPrincipal);
+    }
+
+    @Override
+    public void checkPassword(String password) throws Exception {
+        UserPrincipal userPrincipal = this.getMyInfo()
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
+
+        User user = userRepository.findById(userPrincipal.getCid())
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
+
+        if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
     }
 }

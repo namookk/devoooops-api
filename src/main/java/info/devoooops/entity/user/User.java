@@ -77,6 +77,7 @@ public class User extends DateAudit {
         user.cid = request.getCid();
         user.userId = request.getUserId();
         user.password = request.getPassword();
+        user.passwordDate = Instant.now();
         user.name = request.getName();
         user.nickname = request.getNickname();
         user.birthDate = request.getBirthDate();
@@ -84,7 +85,6 @@ public class User extends DateAudit {
         user.status = UserStatus.Y;
         user.devField = request.getDevField();
         user.career = request.getCareer();
-
 
         return user;
     }
