@@ -13,15 +13,4 @@ import java.util.Optional;
 @Configuration
 @EnableJpaAuditing
 public class AuditConfig {
-
-    @Bean
-    public AuditorAware<String> auditorProvider() {
-        if(SecurityContextHolder.getContext().getAuthentication() != null) {
-            UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return () -> Optional.of(principal.getCid());
-        }else{
-            return () -> Optional.of("system");
-        }
-//        return () -> Optional.of("test");
-    }
 }
