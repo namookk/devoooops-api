@@ -10,16 +10,22 @@ import info.devoooops.repository.auth.AuthTokenRepository;
 import info.devoooops.service.auth.AuthService;
 import info.devoooops.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenUtil jwtTokenUtil;
@@ -42,6 +48,8 @@ public class AuthServiceImpl implements AuthService {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         String cid = principal.getCid();
 
+        setChangePasswordDate(response, principal.getPasswordDate());
+
         // 4. token db 저장
         AuthToken authToken = AuthToken.builder()
                 .cid(cid)
@@ -52,6 +60,22 @@ public class AuthServiceImpl implements AuthService {
         authTokenRepository.save(authToken);
 
         return response;
+    }
+
+    private void setChangePasswordDate(JwtResponse response, Instant passwordDate){
+        Date prevDate = Date.from(passwordDate);
+        Date nowDate = Date.from(Instant.now());
+
+        Calendar today = Calendar.getInstance();
+        today.setTime(nowDate);
+
+        Calendar prev = Calendar.getInstance();
+        prev.setTime(prevDate);
+
+        long diffDays = ((today.getTimeInMillis() - prev.getTimeInMillis()) / 1000 ) / (24 * 60 * 60);
+
+        if(diffDays >= 90) response.setChangePasswordFlag("Y");
+        else response.setChangePasswordFlag("N");
     }
 
     @Override

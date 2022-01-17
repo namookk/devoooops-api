@@ -23,10 +23,18 @@ public class JwtResponse implements Serializable {
     @Schema(description = "Refresh Token 값")
     private String refreshToken;
 
+    @Schema(description = "비밀번호 변경 필요 여부")
+    private String changePasswordFlag;
+
+    public void setChangePasswordFlag(String changePasswordFlag){
+        this.changePasswordFlag = changePasswordFlag;
+    }
+
     @Override
     public String toString(){
         return "grantType : " + this.grantType +"\n"
             + "accessToken : " + this.accessToken +"\n"
-            + "refreshToken : " + this.refreshToken +"\n";
+            + "refreshToken : " + this.refreshToken +"\n"
+            + "changePasswordFlag : " + this.changePasswordFlag +"\n";
     }
 }

@@ -1,5 +1,6 @@
 package info.devoooops.payload.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
@@ -10,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,22 +22,35 @@ import java.util.LinkedHashMap;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserPrincipal implements UserDetails {
+@JsonIgnoreProperties(value = {"username", "password", "accountNonExpired",
+        "accountNonLocked", "credentialsNonExpired", "authorities", "enabled", "passwordDate"})
+public class UserPrincipal implements UserDetails, Serializable {
+
+    private static final long serialVersionUID = -7818242887021456522L;
     private String cid;
+
     private String userId;
+
     private String name;
+
     private String nickname;
+
     private String gender;
+
     private UserStatus status;
+
     private String password;
 
-    @JsonDeserialize(using = InstantDeserializer.class)
-    @JsonSerialize(using = InstantSerializer.class)
     private Instant passwordDate;
+
     private String birthDate;
+
     private String devField;
+
     private Integer career;
+
     private String profilePath;
+
     private String profileImgnm;
 
     @Override
@@ -69,7 +84,6 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal fromToken(LinkedHashMap<String, Object> map){
-        System.out.println("============== " + map.get("passwordDate").getClass().getName());
         return UserPrincipal.builder()
                 .cid((String)map.get("cid"))
                 .userId((String)map.get("userId"))
