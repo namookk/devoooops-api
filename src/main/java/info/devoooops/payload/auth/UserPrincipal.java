@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"username", "password", "accountNonExpired",
-        "accountNonLocked", "credentialsNonExpired", "authorities", "enabled", "passwordDate"})
+        "accountNonLocked", "credentialsNonExpired", "authorities", "enabled", "passwordDate, tempPasswordFl"})
 public class UserPrincipal implements UserDetails, Serializable {
 
     private static final long serialVersionUID = -7818242887021456522L;
@@ -41,6 +41,8 @@ public class UserPrincipal implements UserDetails, Serializable {
 
     private String password;
 
+    @JsonSerialize(using = InstantSerializer.class)
+    @JsonDeserialize(using = InstantDeserializer.class)
     private Instant passwordDate;
 
     private String birthDate;
@@ -52,6 +54,8 @@ public class UserPrincipal implements UserDetails, Serializable {
     private String profilePath;
 
     private String profileImgnm;
+
+    private String tempPasswordFl;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

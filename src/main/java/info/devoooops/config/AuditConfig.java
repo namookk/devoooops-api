@@ -1,5 +1,7 @@
 package info.devoooops.config;
 
+import info.devoooops.entity.user.User;
+import info.devoooops.payload.auth.UserPrincipal;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -15,7 +17,8 @@ public class AuditConfig {
     @Bean
     public AuditorAware<String> auditorProvider() {
         if(SecurityContextHolder.getContext().getAuthentication() != null) {
-            return () -> Optional.of(SecurityContextHolder.getContext().getAuthentication().getName());
+            UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return () -> Optional.of(principal.getCid());
         }else{
             return () -> Optional.of("system");
         }

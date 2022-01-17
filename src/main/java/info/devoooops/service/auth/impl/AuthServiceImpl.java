@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         String cid = principal.getCid();
 
-        setChangePasswordDate(response, principal.getPasswordDate());
+        setChangePasswordDate(response, principal);
 
         // 4. token db 저장
         AuthToken authToken = AuthToken.builder()
@@ -62,20 +62,24 @@ public class AuthServiceImpl implements AuthService {
         return response;
     }
 
-    private void setChangePasswordDate(JwtResponse response, Instant passwordDate){
-        Date prevDate = Date.from(passwordDate);
-        Date nowDate = Date.from(Instant.now());
+    private void setChangePasswordDate(JwtResponse response, UserPrincipal principal){
+        if(principal.getTempPasswordFl() != null && principal.getTempPasswordFl().equals("Y")){
+            response.setChangePasswordFlag("Y");
+        }else{
+            Date prevDate = Date.from(principal.getPasswordDate());
+            Date nowDate = Date.from(Instant.now());
 
-        Calendar today = Calendar.getInstance();
-        today.setTime(nowDate);
+            Calendar today = Calendar.getInstance();
+            today.setTime(nowDate);
 
-        Calendar prev = Calendar.getInstance();
-        prev.setTime(prevDate);
+            Calendar prev = Calendar.getInstance();
+            prev.setTime(prevDate);
 
-        long diffDays = ((today.getTimeInMillis() - prev.getTimeInMillis()) / 1000 ) / (24 * 60 * 60);
+            long diffDays = ((today.getTimeInMillis() - prev.getTimeInMillis()) / 1000 ) / (24 * 60 * 60);
 
-        if(diffDays >= 90) response.setChangePasswordFlag("Y");
-        else response.setChangePasswordFlag("N");
+            if(diffDays >= 90) response.setChangePasswordFlag("Y");
+            else response.setChangePasswordFlag("N");
+        }
     }
 
     @Override

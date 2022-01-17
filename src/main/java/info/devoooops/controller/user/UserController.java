@@ -34,6 +34,17 @@ public class UserController {
     }
 
     @Tag(name="user", description = "회원 API")
+    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경")
+    @Parameters({
+            @Parameter(name = "password", description = "비밀번호", required = true),
+    })
+    @PutMapping("/change/password")
+    public ResponseEntity<ApiUtils.ApiResult<?>> changeMyPassword(@RequestParam String password) throws Exception {
+        userService.changePassword(password);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @Tag(name="user", description = "회원 API")
     @Operation(summary = "내 정보 확인", description = "내 정보 확인")
     @GetMapping("/me")
     public ResponseEntity<ApiUtils.ApiResult<?>> findMyInfo() throws Exception {

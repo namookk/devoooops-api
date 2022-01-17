@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -14,6 +16,8 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 @Builder
 @Entity
 @Table(name="USER")
@@ -34,6 +38,10 @@ public class User extends DateAudit {
     @Column(name="password_date")
     @ApiParam(value = "비밀번호 변경날짜")
     private Instant passwordDate;
+
+    @Column(name="temp_password_fl", nullable = false)
+    @ApiParam(value = "임시비밀번호 여부", required = true)
+    private String tempPasswordFl;
 
     @Column(name="name", nullable = false)
     @ApiParam(value = "이름", required = true)
@@ -78,6 +86,7 @@ public class User extends DateAudit {
         user.userId = request.getUserId();
         user.password = request.getPassword();
         user.passwordDate = Instant.now();
+        user.tempPasswordFl = "N";
         user.name = request.getName();
         user.nickname = request.getNickname();
         user.birthDate = request.getBirthDate();
@@ -88,9 +97,17 @@ public class User extends DateAudit {
 
         return user;
     }
+    public void findPassword(String password){
+        updatePassword(password, "Y");
+    }
 
     public void updatePassword(String password){
+        updatePassword(password, "N");
+    }
+
+    public void updatePassword(String password, String tempPasswordFl){
         this.password = password;
         this.passwordDate = Instant.now();
+        this.tempPasswordFl = tempPasswordFl;
     }
 }

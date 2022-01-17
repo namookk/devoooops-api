@@ -41,4 +41,10 @@ public interface UserService{
      * @throws Exception
      */
     void findPassword(String userId, String name) throws Exception;
+
+    /**
+     * @param password
+     * @throws Exception
+     */
+    void changePassword(String password) throws Exception;
 }

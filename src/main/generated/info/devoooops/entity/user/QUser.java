@@ -51,6 +51,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final EnumPath<UserStatus> status = createEnum("status", UserStatus.class);
 
+    public final StringPath tempPasswordFl = createString("tempPasswordFl");
+
     //inherited
     public final DateTimePath<java.time.Instant> updDate = _super.updDate;
 

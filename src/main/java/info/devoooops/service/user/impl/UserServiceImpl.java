@@ -97,7 +97,21 @@ public class UserServiceImpl implements UserService {
         mailUtil.sendMail(userId, "임시 비밀번호입니다.", "임시 비밀번호 : " + tempPassword);
 
         String encodePassword = passwordEncoder.encode(tempPassword);
+        user.findPassword(encodePassword);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void changePassword(String password) throws Exception {
+        UserPrincipal userPrincipal = this.getMyInfo()
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
+
+        User user = userRepository.findById(userPrincipal.getCid())
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
+
+        String encodePassword = passwordEncoder.encode(password);
         user.updatePassword(encodePassword);
+
         userRepository.save(user);
     }
 
