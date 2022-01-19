@@ -1,5 +1,7 @@
 package info.devoooops.service.auth.impl;
 
+import info.devoooops.common.error.ErrorConst;
+import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.entity.auth.AuthToken;
 import info.devoooops.entity.user.User;
 import info.devoooops.payload.auth.JwtRequest;
@@ -8,6 +10,7 @@ import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.auth.AuthTokenRepository;
 import info.devoooops.service.auth.AuthService;
+import info.devoooops.service.user.UserService;
 import info.devoooops.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthTokenRepository authTokenRepository;
+    private final UserService userService;
 
     @Override
     public JwtResponse doLogin(UserDto.LoginRequest authenticationRequest) throws Exception {
@@ -48,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         String cid = principal.getCid();
 
-        setChangePasswordDate(response, principal);
+        setChangePasswordDate(response, cid);
 
         // 4. token db 저장
         AuthToken authToken = AuthToken.builder()
@@ -62,11 +66,14 @@ public class AuthServiceImpl implements AuthService {
         return response;
     }
 
-    private void setChangePasswordDate(JwtResponse response, UserPrincipal principal){
-        if(principal.getTempPasswordFl() != null && principal.getTempPasswordFl().equals("Y")){
+    private void setChangePasswordDate(JwtResponse response, String cid) throws Exception{
+        User user = userService.findById(cid)
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
+
+        if(user.getTempPasswordFl() != null && user.getTempPasswordFl().equals("Y")){
             response.setChangePasswordFlag("Y");
         }else{
-            Date prevDate = Date.from(principal.getPasswordDate());
+            Date prevDate = Date.from(user.getPasswordDate());
             Date nowDate = Date.from(Instant.now());
 
             Calendar today = Calendar.getInstance();
@@ -118,6 +125,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 6. 저장소 정보 업데이트
         authToken.updateToken(response.getAccessToken(), response.getRefreshToken());
+        authTokenRepository.save(authToken);
 
         return response;
     }

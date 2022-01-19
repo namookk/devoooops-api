@@ -2,24 +2,25 @@ package info.devoooops.controller.user;
 
 import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
-import info.devoooops.entity.user.User;
-import info.devoooops.payload.auth.UserPrincipal;
+import info.devoooops.payload.user.UserDto;
+import info.devoooops.service.auth.AuthService;
 import info.devoooops.service.user.UserService;
 import info.devoooops.util.ApiUtils;
-import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
+    private final AuthService authService;
     private final UserService userService;
 
     @Tag(name="user", description = "회원 API")
@@ -42,6 +43,20 @@ public class UserController {
     public ResponseEntity<ApiUtils.ApiResult<?>> changeMyPassword(@RequestParam String password) throws Exception {
         userService.changePassword(password);
         return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @Tag(name="user", description = "회원 API")
+    @Operation(summary = "회원정보 변경", description = "회원정보 변경")
+    @Parameters({
+            @Parameter(name = "password", description = "비밀번호", required = true),
+    })
+    @PutMapping("/change/info")
+    public ResponseEntity<ApiUtils.ApiResult<?>> changeMyInfo(@RequestBody @Valid UserDto.ChangeInfoRequest request) throws Exception {
+        userService.changeMyInfo(request);
+
+        //변경된 내 정보 반환
+        return ResponseEntity.ok(ApiUtils.success(userService.getMyInfo()
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR))));
     }
 
     @Tag(name="user", description = "회원 API")

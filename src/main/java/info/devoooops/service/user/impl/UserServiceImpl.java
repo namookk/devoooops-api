@@ -17,8 +17,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -29,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final JPAQueryFactory jpaQueryFactory;
     private final PasswordEncoder passwordEncoder;
     private final MailUtil mailUtil;
+
 //    @Override
 //    public User findById(String cid) throws Exception{
 //
@@ -42,7 +46,21 @@ public class UserServiceImpl implements UserService {
 //    }
 
     @Override
-    public Optional<User> signUpUser(UserDto.SignUpRequest request) throws DevException{
+    public Optional<User> findById(String cid) throws Exception{
+        return userRepository.findById(cid);
+    }
+
+    private void uploadProfileImg(User user, MultipartFile file) throws Exception{
+        if(file != null && file.getSize() > 0){
+            String imgPath = null;
+            String imgName = null;
+            //TODO: 프로필 이미지 업로드 구현
+            user.updateProfileImg(imgName, imgPath);
+        }
+    }
+
+    @Override
+    public Optional<User> signUpUser(UserDto.SignUpRequest request) throws Exception{
         checkDuplicate(request.getUserId());
 
         User user = userRepository.save(this.getUserFromSignUpRequest(request));
@@ -58,28 +76,25 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    private User getUserFromSignUpRequest(UserDto.SignUpRequest request){
-        if(request.getProfileImgFile() != null && request.getProfileImgFile().getSize() > 0){
-            //TODO: 프로필 이미지 업로드 구현
-        }
+    private User getUserFromSignUpRequest(UserDto.SignUpRequest request) throws Exception{
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         request.setCid(userRepository.getNewCid());
 
-        return User.fromSignUpRequest(request);
+        User user = User.fromSignUpRequest(request);
+        this.uploadProfileImg(user, request.getProfileImgFile());
+
+        return user;
     }
 
     @Override
-    public Optional<UserPrincipal> getMyInfo() throws Exception {
+    public Optional<User> getMyInfo() throws Exception {
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return Optional.of(userPrincipal);
+        return userRepository.findById(userPrincipal.getCid());
     }
 
     @Override
     public void checkPassword(String password) throws Exception {
-        UserPrincipal userPrincipal = this.getMyInfo()
-                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
-
-        User user = userRepository.findById(userPrincipal.getCid())
+        User user = this.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
 
         if(!passwordEncoder.matches(password, user.getPassword())){
@@ -103,10 +118,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(String password) throws Exception {
-        UserPrincipal userPrincipal = this.getMyInfo()
-                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
-
-        User user = userRepository.findById(userPrincipal.getCid())
+        User user = this.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
 
         String encodePassword = passwordEncoder.encode(password);
@@ -115,4 +127,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public void changeMyInfo(UserDto.ChangeInfoRequest request) throws Exception{
+        User user = this.getMyInfo()
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
+        user.update(request);
+        this.uploadProfileImg(user, request.getProfileImgFile());
+    }
 }

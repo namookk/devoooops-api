@@ -9,9 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 
 public class UserDto {
 
@@ -19,8 +17,7 @@ public class UserDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LoginRequest implements Serializable {
-        private static final long serialVersionUID = -4364185033878551027L;
+    public static class LoginRequest{
 
         @NotEmpty
         @Schema(description = "회원 아이디(이메일)", example = "aaa@aaa.com")
@@ -35,8 +32,7 @@ public class UserDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SignUpRequest implements Serializable {
-        private static final long serialVersionUID = 3945480539089838473L;
+    public static class SignUpRequest {
 
         @NotEmpty
         @Email
@@ -76,4 +72,25 @@ public class UserDto {
         @Schema(description = "cid")
         private String cid;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChangeInfoRequest{
+
+        @NotEmpty
+        @Schema(description = "닉네임", example = "길동쓰")
+        private String nickname;
+
+        @Schema(description = "개발직군")
+        private String devField;
+
+        @Schema(description = "경력")
+        private Integer career;
+
+        @Schema(description = "프로필 이미지 파일")
+        private MultipartFile profileImgFile;
+    }
+
 }

@@ -206,6 +206,8 @@ public class ErrorExceptionHandler {
      */
     @ExceptionHandler(value = {Exception.class})
     private ResponseEntity<?> handleInternalServerError(Exception e) {
+        e.printStackTrace();
+
         ErrorResponse error = ErrorResponse
                 .builder()
                 .code(ErrorConst.UNKNOWN_ERROR.getCode())

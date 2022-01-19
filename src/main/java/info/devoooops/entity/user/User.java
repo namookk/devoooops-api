@@ -1,5 +1,6 @@
 package info.devoooops.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import info.devoooops.model.audit.DateAudit;
 import info.devoooops.payload.user.UserDto;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +22,7 @@ import java.time.Instant;
 @Builder
 @Entity
 @Table(name="USER")
+@JsonIgnoreProperties(value = {"password", "passwordDate", "tempPasswordFl"})
 public class User extends DateAudit {
 
     @Id
@@ -109,5 +111,16 @@ public class User extends DateAudit {
         this.password = password;
         this.passwordDate = Instant.now();
         this.tempPasswordFl = tempPasswordFl;
+    }
+
+    public void updateProfileImg(String profileImgnm, String profilePath){
+        this.profileImgnm = profileImgnm;
+        this.profilePath = profilePath;
+    }
+
+    public void update(UserDto.ChangeInfoRequest request){
+        this.nickname = request.getNickname();
+        this.devField = request.getDevField();
+        this.career = request.getCareer();
     }
 }

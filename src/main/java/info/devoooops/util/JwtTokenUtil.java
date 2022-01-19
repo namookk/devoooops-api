@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenUtil {
     private static final String AUTHORITIES_KEY = "auth";
+    private static final String CID_KEY = "cid";
     private static final String BEARER_TYPE = "bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
@@ -48,7 +49,7 @@ public class JwtTokenUtil {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-                .claim("PRINCIPAL", authentication.getPrincipal())
+                .claim(CID_KEY, ((UserPrincipal) authentication.getPrincipal()).getCid())
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
@@ -80,8 +81,11 @@ public class JwtTokenUtil {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        // UserDetails 객체를 만들어서 Authentication 리턴
-        UserPrincipal principal = UserPrincipal.fromToken((LinkedHashMap<String, Object>)claims.get("PRINCIPAL"));
+        UserPrincipal principal = UserPrincipal.builder()
+                .userId(claims.getSubject())
+                .cid(String.valueOf(claims.get(CID_KEY)))
+                .password(null)
+                .build();
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }

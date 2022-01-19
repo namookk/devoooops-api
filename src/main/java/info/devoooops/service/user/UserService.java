@@ -9,12 +9,18 @@ import info.devoooops.payload.user.UserDto;
 import java.util.Optional;
 
 public interface UserService{
+
+    /**
+     * @return
+     * @throws Exception
+     */
+    Optional<User> findById(String cid) throws Exception;
     /**
      * @param request
      * @return
      * @throws DevException
      */
-    Optional<User> signUpUser(UserDto.SignUpRequest request) throws DevException;
+    Optional<User> signUpUser(UserDto.SignUpRequest request) throws Exception;
 
     /**
      * @param userId
@@ -27,7 +33,7 @@ public interface UserService{
      * @return
      * @throws Exception
      */
-    Optional<UserPrincipal> getMyInfo() throws Exception;
+    Optional<User> getMyInfo() throws Exception;
 
     /**
      * @param password
@@ -47,4 +53,11 @@ public interface UserService{
      * @throws Exception
      */
     void changePassword(String password) throws Exception;
+
+    /**
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    void changeMyInfo(UserDto.ChangeInfoRequest request) throws Exception;
 }

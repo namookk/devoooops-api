@@ -23,43 +23,22 @@ import java.util.LinkedHashMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"username", "password", "accountNonExpired",
-        "accountNonLocked", "credentialsNonExpired", "authorities", "enabled", "passwordDate, tempPasswordFl"})
+        "accountNonLocked", "credentialsNonExpired", "authorities", "enabled"})
 public class UserPrincipal implements UserDetails, Serializable {
 
     private static final long serialVersionUID = -7818242887021456522L;
     private String cid;
-
     private String userId;
-
-    private String name;
-
-    private String nickname;
-
-    private String gender;
-
-    private UserStatus status;
-
     private String password;
-
-    @JsonSerialize(using = InstantSerializer.class)
-    @JsonDeserialize(using = InstantDeserializer.class)
-    private Instant passwordDate;
-
-    private String birthDate;
-
-    private String devField;
-
-    private Integer career;
-
-    private String profilePath;
-
-    private String profileImgnm;
-
-    private String tempPasswordFl;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
@@ -87,15 +66,4 @@ public class UserPrincipal implements UserDetails, Serializable {
         return true;
     }
 
-    public static UserPrincipal fromToken(LinkedHashMap<String, Object> map){
-        return UserPrincipal.builder()
-                .cid((String)map.get("cid"))
-                .userId((String)map.get("userId"))
-                .name((String)map.get("name"))
-                .nickname((String)map.get("nickname"))
-                .status(UserStatus.valueOf((String)map.get("status")))
-                .gender((String)map.get("gender"))
-                .birthDate((String)map.get("birthDate"))
-                .build();
-    }
 }
