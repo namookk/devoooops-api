@@ -62,6 +62,15 @@ public class UserController {
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR))));
     }
 
+
+    @Tag(name="user", description = "회원 API")
+    @Operation(summary = "회원탈퇴", description = "회원탈퇴")
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<ApiUtils.ApiResult<?>> doWithdraw() throws Exception{
+        userService.withdrawUser();
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
     @Tag(name="user", description = "회원 API")
     @Operation(summary = "내 정보 확인", description = "내 정보 확인")
     @GetMapping("/me")

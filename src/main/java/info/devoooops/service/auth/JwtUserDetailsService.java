@@ -1,6 +1,7 @@
 package info.devoooops.service.auth;
 
 import info.devoooops.entity.user.User;
+import info.devoooops.entity.user.UserStatus;
 import info.devoooops.repository.user.UserRepository;
 import info.devoooops.payload.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtUserDetailsService implements UserDetailsService {
-    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
@@ -25,6 +25,12 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        //탈퇴회원 검증
+        if(user.getStatus().equals(UserStatus.N)){
+            throw new UsernameNotFoundException("User not found");
+        }
+
         UserPrincipal principal = modelMapper.map(user, UserPrincipal.class);
         return principal;
     }

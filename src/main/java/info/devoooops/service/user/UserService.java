@@ -60,4 +60,10 @@ public interface UserService{
      * @throws Exception
      */
     void changeMyInfo(UserDto.ChangeInfoRequest request) throws Exception;
+
+
+    /**
+     * @throws Exception
+     */
+    void withdrawUser() throws Exception;
 }

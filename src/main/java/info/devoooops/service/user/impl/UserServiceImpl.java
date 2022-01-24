@@ -113,6 +113,7 @@ public class UserServiceImpl implements UserService {
 
         String encodePassword = passwordEncoder.encode(tempPassword);
         user.findPassword(encodePassword);
+
         userRepository.save(user);
     }
 
@@ -133,5 +134,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
         user.update(request);
         this.uploadProfileImg(user, request.getProfileImgFile());
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void withdrawUser() throws Exception{
+        User user = this.getMyInfo()
+                .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
+
+        user.withdraw();
+        userRepository.save(user);
     }
 }

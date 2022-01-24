@@ -123,4 +123,15 @@ public class User extends DateAudit {
         this.devField = request.getDevField();
         this.career = request.getCareer();
     }
+
+    public void withdraw(){
+        this.name = "탈퇴회원";
+        this.birthDate = "";
+        this.gender = "";
+        this.devField = null;
+        this.career = null;
+        this.profilePath = null;
+        this.profileImgnm = null;
+        status = UserStatus.N;
+    }
 }
