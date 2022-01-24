@@ -11,11 +11,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -62,7 +65,8 @@ public class UserController {
     @Tag(name="user", description = "회원 API")
     @Operation(summary = "내 정보 확인", description = "내 정보 확인")
     @GetMapping("/me")
-    public ResponseEntity<ApiUtils.ApiResult<?>> findMyInfo() throws Exception {
+    public ResponseEntity<ApiUtils.ApiResult<?>> findMyInfo(HttpServletRequest request) throws Exception {
+        log.info("cid ==== > {}", request.getAttribute("cid"));
         return ResponseEntity.ok(ApiUtils.success(userService.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR))));
     }

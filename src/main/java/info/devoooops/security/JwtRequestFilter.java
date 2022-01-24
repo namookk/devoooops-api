@@ -1,5 +1,6 @@
 package info.devoooops.security;
 
+import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -34,6 +35,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(jwt) && jwtTokenUtil.validateToken(jwt)) {
             Authentication authentication = jwtTokenUtil.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            request.setAttribute("cid", ((UserPrincipal)authentication.getPrincipal()).getCid());
         }
 
         filterChain.doFilter(request, response);
