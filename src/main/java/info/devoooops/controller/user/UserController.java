@@ -2,6 +2,7 @@ package info.devoooops.controller.user;
 
 import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
+import info.devoooops.entity.user.User;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.service.auth.AuthService;
 import info.devoooops.service.user.UserService;
@@ -67,7 +68,10 @@ public class UserController {
     @Operation(summary = "회원탈퇴", description = "회원탈퇴")
     @DeleteMapping("/withdraw")
     public ResponseEntity<ApiUtils.ApiResult<?>> doWithdraw() throws Exception{
-        userService.withdrawUser();
+        User user = userService.withdrawUser();
+
+        //토큰 삭제
+        authService.deleteToken(user.getCid());
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 

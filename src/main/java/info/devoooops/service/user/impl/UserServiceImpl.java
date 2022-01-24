@@ -139,11 +139,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void withdrawUser() throws Exception{
+    public User withdrawUser() throws Exception{
         User user = this.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
 
         user.withdraw();
-        userRepository.save(user);
+
+        return userRepository.save(user);
     }
 }

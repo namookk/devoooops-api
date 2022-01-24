@@ -29,4 +29,10 @@ public interface AuthService {
      * @throws Exception
      */
     JwtResponse reissueToken(JwtRequest tokenRequestDto) throws Exception;
+
+    /**
+     * @param cid
+     * @throws Exception
+     */
+    void deleteToken(String cid) throws Exception;
 }

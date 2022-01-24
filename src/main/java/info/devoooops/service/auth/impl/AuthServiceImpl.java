@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -128,5 +129,10 @@ public class AuthServiceImpl implements AuthService {
         authTokenRepository.save(authToken);
 
         return response;
+    }
+
+    @Override
+    public void deleteToken(String cid) throws Exception {
+        authTokenRepository.deleteById(cid);
     }
 }

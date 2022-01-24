@@ -65,5 +65,5 @@ public interface UserService{
     /**
      * @throws Exception
      */
-    void withdrawUser() throws Exception;
+    User withdrawUser() throws Exception;
 }
