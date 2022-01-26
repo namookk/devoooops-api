@@ -1,9 +1,8 @@
 package info.devoooops.service.board;
 
-import info.devoooops.entity.board.Board;
-
-import java.util.List;
+import info.devoooops.common.error.exception.DevNotFoundException;
+import info.devoooops.payload.board.BoardResponse;
 
 public interface BoardService {
-    List<Board> getAllBoards();
+    BoardResponse getAllBoards() throws DevNotFoundException;
 }

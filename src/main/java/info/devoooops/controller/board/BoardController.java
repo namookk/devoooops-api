@@ -1,5 +1,7 @@
 package info.devoooops.controller.board;
 
+import info.devoooops.common.error.exception.DevException;
+import info.devoooops.common.error.exception.DevNotFoundException;
 import info.devoooops.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("")
-    public ResponseEntity<?> findAllBoards() {
+    public ResponseEntity<?> findAllBoards() throws DevException {
         return ResponseEntity.ok(boardService.getAllBoards());
     }
 }
