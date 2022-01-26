@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/**", "/swagger-ui/**").permitAll()
-                .antMatchers("/api/**").hasRole("USER")
+                .antMatchers("/user/**").hasRole("USER")
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
