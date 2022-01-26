@@ -2,7 +2,8 @@ package info.devoooops.service.user.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import info.devoooops.common.error.ErrorConst;
-import info.devoooops.common.error.exception.*;
+import info.devoooops.common.error.exception.DevInternalServerErrorException;
+import info.devoooops.common.error.exception.DevRuntimeException;
 import info.devoooops.entity.user.User;
 import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
@@ -19,9 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -114,6 +112,7 @@ public class UserServiceImpl implements UserService {
         String encodePassword = passwordEncoder.encode(tempPassword);
         user.findPassword(encodePassword);
 
+        //TODO: 이슈 발생하여 해결 필요
         userRepository.save(user);
     }
 
