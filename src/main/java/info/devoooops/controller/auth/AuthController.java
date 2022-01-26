@@ -4,35 +4,23 @@ import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevException;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.common.error.exception.DevUnauthorizedException;
-import info.devoooops.entity.auth.AuthToken;
-import info.devoooops.entity.user.User;
 import info.devoooops.model.transaction.DevTransaction;
 import info.devoooops.model.transaction.DevTransactionRead;
 import info.devoooops.payload.auth.JwtRequest;
-import info.devoooops.payload.auth.JwtResponse;
-import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
-import info.devoooops.repository.auth.AuthTokenRepository;
 import info.devoooops.service.auth.AuthService;
 import info.devoooops.service.user.UserService;
 import info.devoooops.util.ApiUtils;
-import info.devoooops.util.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 
 @RestController
 @RequestMapping("/auth")
@@ -111,8 +99,9 @@ public class AuthController {
             @Parameter(name = "name", description = "유저 이름", required = true)
     })
     @DevTransaction
-    @GetMapping("/find/password")
-    public ResponseEntity<ApiUtils.ApiResult<?>> doLogout(@RequestParam String userId, @RequestParam String name) throws Exception{
+    @PostMapping("/find/password")
+    public ResponseEntity<ApiUtils.ApiResult<?>> findPassword(@RequestParam String userId,
+                                                              @RequestParam String name) throws Exception{
         userService.findPassword(userId, name);
         return ResponseEntity.ok(ApiUtils.success(null));
     }

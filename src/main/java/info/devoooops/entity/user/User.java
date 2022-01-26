@@ -82,6 +82,10 @@ public class User extends DateAudit {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    public void setCareer(Integer career){
+        this.career = career;
+    }
+
     public static User fromSignUpRequest(UserDto.SignUpRequest request){
         User user = new User();
         user.cid = request.getCid();

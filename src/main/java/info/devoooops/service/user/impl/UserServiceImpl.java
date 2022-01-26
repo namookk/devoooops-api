@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
@@ -100,6 +101,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
     public void findPassword(String userId, String name) throws Exception {
         User user = userRepository.findByUserIdAndName(userId, name)
@@ -111,9 +113,6 @@ public class UserServiceImpl implements UserService {
 
         String encodePassword = passwordEncoder.encode(tempPassword);
         user.findPassword(encodePassword);
-
-        //TODO: 이슈 발생하여 해결 필요
-        userRepository.save(user);
     }
 
     @Override
@@ -123,8 +122,6 @@ public class UserServiceImpl implements UserService {
 
         String encodePassword = passwordEncoder.encode(password);
         user.updatePassword(encodePassword);
-
-        userRepository.save(user);
     }
 
     @Override
@@ -133,8 +130,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
         user.update(request);
         this.uploadProfileImg(user, request.getProfileImgFile());
-
-        userRepository.save(user);
     }
 
     @Override
@@ -144,6 +139,6 @@ public class UserServiceImpl implements UserService {
 
         user.withdraw();
 
-        return userRepository.save(user);
+        return user;
     }
 }

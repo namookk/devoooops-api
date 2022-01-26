@@ -90,14 +90,3 @@ spring:
     url: jdbc:mysql://dev-oooops.cnlj6i6555g0.ap-northeast-2.rds.amazonaws.com:3306/devoooops?serverTimezone=UTC
     username: devoooops
     password: devOooops22!
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: devoooopsnoreply@gmail.com
-    password: q1w2e3r4!!
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
