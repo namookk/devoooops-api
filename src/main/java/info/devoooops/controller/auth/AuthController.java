@@ -4,8 +4,6 @@ import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevException;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.common.error.exception.DevUnauthorizedException;
-import info.devoooops.model.transaction.DevTransaction;
-import info.devoooops.model.transaction.DevTransactionRead;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.service.auth.AuthService;
@@ -36,7 +34,6 @@ public class AuthController {
 //            @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
 //            @Parameter(name = "password", description = "비밀번호", required = true)
 //    })
-    @DevTransaction
     @PostMapping("/signup")
     public ResponseEntity<ApiUtils.ApiResult<?>> doSignUp(@RequestBody @Valid UserDto.SignUpRequest signUpRequest) throws Exception{
         return ResponseEntity.ok(ApiUtils.success(userService.signUpUser(signUpRequest)
@@ -48,7 +45,6 @@ public class AuthController {
     @Parameters({
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
     })
-    @DevTransactionRead
     @GetMapping("/check/duplicate")
     public ResponseEntity<ApiUtils.ApiResult<?>> checkDuplicate(@RequestParam String userId) throws DevException {
         userService.checkDuplicate(userId);
@@ -61,7 +57,6 @@ public class AuthController {
             @Parameter(name = "userId", description = "회원 아이디(이메일)", required = true),
             @Parameter(name = "password", description = "비밀번호", required = true)
     })
-    @DevTransaction
     @PostMapping("/login")
     public ResponseEntity<ApiUtils.ApiResult<?>> doLogin(@RequestBody @Valid UserDto.LoginRequest authenticationRequest) throws Exception{
         return ResponseEntity.ok(ApiUtils.success(authService.doLogin(authenticationRequest)));
@@ -73,7 +68,6 @@ public class AuthController {
             @Parameter(name = "accessToken", description = "기존에 발급받은 Access Token 값", required = true),
             @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
     })
-    @DevTransaction
     @PostMapping("/logout")
     public ResponseEntity<ApiUtils.ApiResult<?>> doLogout(@RequestBody JwtRequest tokenRequestDto) throws Exception{
         authService.doLogout(tokenRequestDto);
@@ -86,7 +80,6 @@ public class AuthController {
             @Parameter(name = "accessToken", description = "기존에 발급받은 Access Token 값", required = true),
             @Parameter(name = "refreshToken", description = "기존에 발급받은 Refresh Token 값", required = true)
     })
-    @DevTransaction
     @PostMapping("/refresh")
     public ResponseEntity<ApiUtils.ApiResult<?>> reissueToken(@RequestBody JwtRequest tokenRequestDto) throws Exception{
         return ResponseEntity.ok(ApiUtils.success(authService.reissueToken(tokenRequestDto)));
@@ -98,7 +91,6 @@ public class AuthController {
             @Parameter(name = "userId", description = "유저 아이디(이메일)", required = true),
             @Parameter(name = "name", description = "유저 이름", required = true)
     })
-    @DevTransaction
     @PostMapping("/find/password")
     public ResponseEntity<ApiUtils.ApiResult<?>> findPassword(@RequestParam String userId,
                                                               @RequestParam String name) throws Exception{

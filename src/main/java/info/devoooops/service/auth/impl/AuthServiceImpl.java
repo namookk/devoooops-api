@@ -4,6 +4,7 @@ import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.entity.auth.AuthToken;
 import info.devoooops.entity.user.User;
+import info.devoooops.model.transaction.DevTransaction;
 import info.devoooops.payload.auth.JwtRequest;
 import info.devoooops.payload.auth.JwtResponse;
 import info.devoooops.payload.auth.UserPrincipal;
@@ -37,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
 
     @Override
+    @DevTransaction
     public JwtResponse doLogin(UserDto.LoginRequest authenticationRequest) throws Exception {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -91,6 +93,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @DevTransaction
     public void doLogout(JwtRequest tokenRequestDto) throws Exception {
         if (!jwtTokenUtil.validateToken(tokenRequestDto.getAccessToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
@@ -102,6 +105,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @DevTransaction
     public JwtResponse reissueToken(JwtRequest tokenRequestDto) throws Exception {
         // 1. Refresh Token 검증
         if (!jwtTokenUtil.validateToken(tokenRequestDto.getRefreshToken())) {
@@ -132,6 +136,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @DevTransaction
     public void deleteToken(String cid) throws Exception {
         authTokenRepository.deleteById(cid);
     }

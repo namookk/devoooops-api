@@ -5,6 +5,8 @@ import info.devoooops.common.error.ErrorConst;
 import info.devoooops.common.error.exception.DevInternalServerErrorException;
 import info.devoooops.common.error.exception.DevRuntimeException;
 import info.devoooops.entity.user.User;
+import info.devoooops.model.transaction.DevTransaction;
+import info.devoooops.model.transaction.DevTransactionRead;
 import info.devoooops.payload.auth.UserPrincipal;
 import info.devoooops.payload.user.UserDto;
 import info.devoooops.repository.user.UserRepository;
@@ -18,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
 //    }
 
     @Override
+    @DevTransactionRead
     public Optional<User> findById(String cid) throws Exception{
         return userRepository.findById(cid);
     }
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @DevTransaction
     public Optional<User> signUpUser(UserDto.SignUpRequest request) throws Exception{
         checkDuplicate(request.getUserId());
 
@@ -67,6 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @DevTransactionRead
     public Boolean checkDuplicate(String userId) throws DevRuntimeException {
         userRepository.findByUserId(userId)
                 .ifPresent(user -> {
@@ -86,12 +90,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @DevTransaction
     public Optional<User> getMyInfo() throws Exception {
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findById(userPrincipal.getCid());
     }
 
     @Override
+    @DevTransactionRead
     public void checkPassword(String password) throws Exception {
         User user = this.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
@@ -103,6 +109,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @DevTransaction
     public void findPassword(String userId, String name) throws Exception {
         User user = userRepository.findByUserIdAndName(userId, name)
                 .orElseThrow(() -> new UsernameNotFoundException("유저 정보를 찾을 수 없습니다."));
@@ -116,6 +123,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @DevTransaction
     public void changePassword(String password) throws Exception {
         User user = this.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
@@ -125,6 +133,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @DevTransaction
     public void changeMyInfo(UserDto.ChangeInfoRequest request) throws Exception{
         User user = this.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));
@@ -133,6 +142,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @DevTransaction
     public User withdrawUser() throws Exception{
         User user = this.getMyInfo()
                 .orElseThrow(() -> new DevInternalServerErrorException(ErrorConst.UNKNOWN_ERROR));

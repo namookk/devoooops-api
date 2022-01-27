@@ -2,6 +2,7 @@ package info.devoooops.service.auth;
 
 import info.devoooops.entity.user.User;
 import info.devoooops.entity.user.UserStatus;
+import info.devoooops.model.transaction.DevTransactionRead;
 import info.devoooops.repository.user.UserRepository;
 import info.devoooops.payload.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     @Override
+    @DevTransactionRead
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
