@@ -15,6 +15,7 @@ public class DevOooopsApiApplication {
     }
     public static void main(String[] args) {
         SpringApplication.run(DevOooopsApiApplication.class, args);
+        System.out.println("Gg");
     }
 
 }
